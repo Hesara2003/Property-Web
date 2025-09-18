@@ -24,6 +24,7 @@ import {
   ArrowLeft,
 } from "lucide-react"
 import Link from "next/link"
+import { SplitTextReveal } from "@/components/split-text-reveal"
 
 const pricingPlans = {
   buyer: [
@@ -45,7 +46,7 @@ const pricingPlans = {
     },
     {
       name: "Premium",
-      price: 999,
+          price: 4900, // LKR
       period: "month",
       description: "Best for serious property buyers",
       features: [
@@ -64,7 +65,7 @@ const pricingPlans = {
     },
     {
       name: "Enterprise",
-      price: 2499,
+          price: 12900, // LKR
       period: "month",
       description: "For real estate professionals",
       features: [
@@ -101,7 +102,7 @@ const pricingPlans = {
     },
     {
       name: "Professional",
-      price: 1999,
+          price: 9900, // LKR
       period: "month",
       description: "Perfect for real estate agents",
       features: [
@@ -120,7 +121,7 @@ const pricingPlans = {
     },
     {
       name: "Agency",
-      price: 4999,
+          price: 14900, // LKR
       period: "month",
       description: "For real estate agencies",
       features: [
@@ -149,7 +150,7 @@ export default function PricingPage() {
   const formatPrice = (price: number) => {
     if (price === 0) return "Free"
     const finalPrice = isAnnual ? Math.floor(price * 10) : price // 2 months free on annual
-    return `₹${finalPrice.toLocaleString()}`
+        return `LKR ${finalPrice.toLocaleString()}`
   }
 
   const handleSelectPlan = (plan: any) => {
@@ -175,7 +176,7 @@ export default function PricingPage() {
               </Button>
               <div className="flex items-center gap-2">
                 <Home className="h-8 w-8 text-primary" />
-                <span className="text-2xl font-bold text-foreground">PropertyHub</span>
+                <span className="text-2xl font-bold text-foreground">Property Scout</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -193,9 +194,13 @@ export default function PricingPage() {
       <div className="container mx-auto px-4 py-16">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-balance mb-6">Choose Your Perfect Plan</h1>
+          <SplitTextReveal
+            text="Choose Your Perfect Plan"
+            as="h1"
+            className="text-4xl md:text-5xl font-bold text-balance mb-6"
+          />
           <p className="text-xl text-muted-foreground text-balance mb-8 max-w-2xl mx-auto">
-            Unlock the full potential of PropertyHub with plans designed for every type of property professional
+            Unlock the full potential of Property Scout with plans designed for every type of property professional in Sri Lanka. Prices shown in LKR (exclusive of government taxes).
           </p>
 
           {/* User Type Toggle */}
@@ -304,7 +309,12 @@ export default function PricingPage() {
 
         {/* Features Comparison */}
         <div className="mt-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose PropertyHub?</h2>
+          <SplitTextReveal
+            text="Why Choose Property Scout?"
+            as="h2"
+            className="text-3xl font-bold text-center mb-12"
+            delay={0.05}
+          />
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -338,7 +348,12 @@ export default function PricingPage() {
 
         {/* FAQ Section */}
         <div className="mt-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+          <SplitTextReveal
+            text="Frequently Asked Questions"
+            as="h2"
+            className="text-3xl font-bold text-center mb-12"
+            delay={0.1}
+          />
           <div className="max-w-3xl mx-auto space-y-6">
             <Card>
               <CardContent className="p-6">
@@ -353,7 +368,7 @@ export default function PricingPage() {
               <CardContent className="p-6">
                 <h3 className="font-semibold mb-2">What payment methods do you accept?</h3>
                 <p className="text-muted-foreground">
-                  We accept all major credit cards, debit cards, UPI, net banking, and digital wallets.
+                  We accept local and international cards (Visa / Mastercard), LankaQR, bank transfer, and selected mobile wallets. Invoicing available for Agency plans.
                 </p>
               </CardContent>
             </Card>

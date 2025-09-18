@@ -3,9 +3,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Building2, FileText, Scale, Users, Shield } from "lucide-react"
 import Link from "next/link"
 
+import GSAPScrollProvider from "@/components/gsap-scroll-provider"
+
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-background">
+  <GSAPScrollProvider>
+  <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-nav sticky top-0 z-50">
         <div className="container mx-auto px-6 py-6">
@@ -15,7 +18,7 @@ export default function TermsPage() {
                 <Building2 className="h-7 w-7 text-primary-foreground" />
               </div>
               <span className="text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                PropertyHub
+                Property Scout
               </span>
             </div>
 
@@ -66,20 +69,20 @@ export default function TermsPage() {
 
       <div className="container mx-auto px-6 py-16">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+  <div className="text-center mb-16" data-gsap="fade-up">
           <div className="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
             <Scale className="h-10 w-10 text-primary-foreground" />
           </div>
           <h1 className="text-4xl lg:text-5xl font-light tracking-tight text-balance mb-6">Terms of Service</h1>
           <p className="text-xl text-muted-foreground text-balance max-w-2xl mx-auto">
-            Please read these terms carefully before using PropertyHub's services.
+            Please read these terms carefully before using Property Scout's services in Sri Lanka.
           </p>
           <p className="text-sm text-muted-foreground mt-4">Last updated: January 15, 2024</p>
         </div>
 
         {/* Terms Content */}
         <div className="max-w-4xl mx-auto space-y-12">
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.05">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
                 <FileText className="h-6 w-6 text-primary" />
@@ -87,19 +90,19 @@ export default function TermsPage() {
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  By accessing and using PropertyHub's services, you accept and agree to be bound by the terms and
+                  By accessing and using Property Scout's services, you accept and agree to be bound by the terms and
                   provision of this agreement. If you do not agree to abide by the above, please do not use this
                   service.
                 </p>
                 <p>
-                  These Terms of Service ("Terms") govern your use of PropertyHub's website, mobile application, and
-                  related services (collectively, the "Service") operated by PropertyHub ("us", "we", or "our").
+                  These Terms of Service ("Terms") govern your use of Property Scout's website, platform, and related
+                  services (collectively, the "Service") operated by Property Scout ("us", "we", or "our").
                 </p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.1">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
                 <Users className="h-6 w-6 text-primary" />
@@ -120,12 +123,12 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.15">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6">Service Description</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  PropertyHub provides a platform that connects property buyers with sellers through intelligent
+                  Property Scout provides a platform that connects property buyers with sellers through intelligent
                   matching algorithms. Our services include:
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
@@ -139,11 +142,11 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.2">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6">User Responsibilities</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>As a user of PropertyHub, you agree to:</p>
+                <p>As a user of Property Scout, you agree to:</p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Provide accurate and truthful information</li>
                   <li>Use the Service only for lawful purposes</li>
@@ -156,7 +159,7 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.25">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6">Prohibited Activities</h2>
               <div className="space-y-4 text-muted-foreground">
@@ -173,11 +176,11 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.3">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6">Fees and Payments</h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>PropertyHub operates on the following fee structure:</p>
+                <p>Property Scout operates on the following fee structure (fees shown in Sri Lankan Rupees - LKR unless stated otherwise):</p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Basic services are free for property buyers</li>
                   <li>Sellers pay a success fee only upon completed transactions</li>
@@ -189,14 +192,14 @@ export default function TermsPage() {
             </CardContent>
           </Card>
 
-          <Card className="glass-card border-primary/10">
+          <Card className="glass-card border-primary/10" data-gsap="fade-up" data-gsap-delay="0.35">
             <CardContent className="p-8">
               <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
                 <Shield className="h-6 w-6 text-primary" />
                 Limitation of Liability
               </h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>PropertyHub acts as a platform connecting buyers and sellers. We are not responsible for:</p>
+                <p>Property Scout acts as a platform connecting buyers and sellers. We are not responsible for:</p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>The accuracy of property information provided by sellers</li>
                   <li>The completion or success of any property transactions</li>
@@ -234,13 +237,13 @@ export default function TermsPage() {
                 <p>If you have any questions about these Terms of Service, please contact us:</p>
                 <div className="space-y-2">
                   <p>
-                    <strong>Email:</strong> legal@propertyhub.com
+                    <strong>Email:</strong> legal@propertyscout.lk
                   </p>
                   <p>
-                    <strong>Phone:</strong> +91 1800 123 4567
+                    <strong>Phone:</strong> +94 11 234 5678
                   </p>
                   <p>
-                    <strong>Address:</strong> 123 Business District, Mumbai, Maharashtra 400001, India
+                    <strong>Address:</strong> 42 Sir Baron Jayatilaka Mawatha, Colombo 01, Sri Lanka
                   </p>
                 </div>
               </div>
@@ -249,7 +252,7 @@ export default function TermsPage() {
         </div>
 
         {/* CTA Section */}
-        <section className="mt-20 gradient-accent/10 rounded-3xl p-12 text-center">
+  <section className="mt-20 gradient-accent/10 rounded-3xl p-12 text-center" data-gsap="scale-in" data-gsap-delay="0.15">
           <h2 className="text-3xl font-light tracking-tight mb-6">Ready to get started?</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             By creating an account, you agree to these terms and can start your property search journey
@@ -275,7 +278,7 @@ export default function TermsPage() {
                   <Building2 className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <span className="text-2xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  PropertyHub
+                  Property Scout
                 </span>
               </div>
               <p className="text-muted-foreground leading-relaxed">
@@ -338,10 +341,11 @@ export default function TermsPage() {
             </div>
           </div>
           <div className="border-t border-border/50 mt-16 pt-10 text-center text-muted-foreground">
-            <p>&copy; 2024 PropertyHub. All rights reserved.</p>
+            <p>&copy; 2025 Property Scout. All rights reserved.</p>
           </div>
         </div>
       </footer>
     </div>
+    </GSAPScrollProvider>
   )
 }

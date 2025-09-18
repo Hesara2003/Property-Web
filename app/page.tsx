@@ -1,12 +1,17 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card" // still used earlier on page
 import { Badge } from "@/components/ui/badge"
 import { Search, Home, Users, Shield, ArrowRight, Sparkles, Building2, MapPin, Clock } from "lucide-react"
 import Link from "next/link"
+import GSAPScrollProvider from "@/components/gsap-scroll-provider"
+import { SplitTextReveal } from "@/components/split-text-reveal"
+import { PricingSection } from "@/components/pricing-section"
+import { HowItWorksSection } from "@/components/how-it-works"
+import { ScrollProgressBar } from "@/components/scroll-progress"
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-nav sticky top-0 z-50">
         <div className="container mx-auto px-6 py-6">
@@ -16,7 +21,7 @@ export default function LandingPage() {
                 <Building2 className="h-7 w-7 text-primary-foreground" />
               </div>
               <span className="text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                PropertyHub
+                Property Scout
               </span>
             </div>
 
@@ -63,39 +68,44 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        {/* Progress bar sits at bottom of header */}
+        <div className="absolute left-0 right-0 bottom-0 h-1 overflow-hidden">
+          <ScrollProgressBar />
+        </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="py-24 lg:py-40 relative overflow-hidden">
+      {/* Hero Section (Fixed Parallax Background) */}
+      <section className="py-24 lg:py-40 relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
         <div className="absolute inset-0">
-          <img
-            src="/modern-luxury-property-exterior-with-glass-windows.jpg"
-            alt="Modern luxury property background"
-            className="w-full h-full object-cover"
+          {/* Fixed background image using CSS parallax (background-attachment: fixed on desktop) */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[url('/modern-luxury-property-exterior-with-glass-windows.jpg')] bg-cover bg-center md:bg-fixed scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/60"></div>
+          {/* Soft overlay gradient (static to reduce motion for accessibility) */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/50 to-black/60" />
+          {/* Accent glow layer (kept subtle & static) */}
+          <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[110%] h-[110%] bg-gradient-radial from-blue-500/20 via-transparent to-transparent blur-3xl opacity-70 pointer-events-none" />
         </div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center space-y-12 max-w-6xl mx-auto">
             <div className="space-y-8 animate-fade-in-up">
               <Badge
                 variant="secondary"
-                className="glass-card border-white/20 text-white bg-white/10 backdrop-blur-sm px-4 py-2 text-sm font-medium"
+                className="glass-card border-white/20 text-blue-600 bg-white/10 backdrop-blur-sm px-4 py-2 text-sm font-medium"
               >
-                <Sparkles className="h-4 w-4 mr-2" />
-                Trusted by 10,000+ Property Buyers
+                <Sparkles className="text-blue-600 h-4 w-4 mr-2" />
+                Trusted by 5,000+ Sri Lankan Buyers
               </Badge>
 
-              <h1 className="text-display font-light tracking-tight text-balance text-white">
-                Premium Property
-                <span className="block bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400 bg-clip-text text-transparent">
-                  Marketplace
-                </span>
-              </h1>
+              <SplitTextReveal
+                text="Premium Property Marketplace"
+                className="text-display font-light tracking-tight text-balance text-white"
+                as="h1"
+              />
 
               <p className="text-xl lg:text-2xl text-white/90 text-balance leading-relaxed max-w-4xl mx-auto font-light">
-                Connect with verified sellers through our intelligent matching system. Find properties that meet your
-                exact requirements with unprecedented precision.
+                Connect with verified sellers across Colombo, Kandy, Galle, Jaffna and Nuwara Eliya. Find homes, land and investment property that match your exact requirements in minutes.
               </p>
             </div>
 
@@ -122,12 +132,81 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-20 relative">
+      {/* Featured Locations Gallery */}
+      <div data-divider data-divider-dir="left" className="h-20 relative -mt-10 -mb-10">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-violet-500/10 blur-xl" />
+      </div>
+      <section className="py-28 relative overflow-hidden" data-gsap="fade-up" data-gsap-delay="0.1">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/10 rounded-full blur-3xl" />
+        </div>
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-16">
+            <div className="flex-1 space-y-8">
+              <Badge variant="secondary" className="px-4 py-1 text-xs tracking-wider">Featured Locations</Badge>
+              <h2 className="text-4xl md:text-5xl font-light tracking-tight leading-tight text-balance">
+                Explore Sri Lanka's <span className="bg-gradient-to-r from-blue-600 to-violet-500 bg-clip-text text-transparent">Prime Property</span> Destinations
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
+                From luxury urban residences in Colombo to heritage charm in Galle and cool hillside retreats in Kandy – discover curated investment and lifestyle opportunities across the island.
+              </p>
+              <div className="grid grid-cols-2 gap-4 max-w-md">
+                {["High-Rise Luxury", "Beachfront Villas", "Heritage Homes", "Hill Country Estates"].map((t, i) => (
+                  <div key={i} className="text-sm px-3 py-2 rounded-full bg-muted/60 backdrop-blur-sm border border-border/50 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-violet-500" />
+                    {t}
+                  </div>
+                ))}
+              </div>
+              <div className="pt-4 flex flex-wrap gap-4">
+                <Button asChild className="gap-2">
+                  <Link href="/matches">Browse Matches <ArrowRight className="h-4 w-4" /></Link>
+                </Button>
+                <Button variant="outline" className="bg-transparent" asChild>
+                  <Link href="/about">Why Property Scout</Link>
+                </Button>
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="grid sm:grid-cols-2 gap-6">
+                {[
+                  { src: "/colombo-skyline.svg", alt: "Colombo Skyline", label: "Colombo 01-07" },
+                  { src: "/galle-fort.svg", alt: "Galle Fort", label: "Galle & South Coast" },
+                  { src: "/kandy-temple.svg", alt: "Kandy Temple", label: "Kandy & Central" },
+                  { src: "/modern-luxury-property-exterior-with-glass-windows.jpg", alt: "Luxury Villa", label: "Coastal Villas" },
+                ].map((img, i) => (
+                  <div
+                    key={i}
+                    className="group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-muted/40 to-muted/10 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all"
+                  >
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-70 group-hover:opacity-90 transition-opacity" />
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs font-medium text-white">
+                      <span className="tracking-wide uppercase">{img.label}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20">View</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div data-divider data-divider-dir="right" className="h-16 relative -mt-6 -mb-6">
+        <div className="absolute inset-0 bg-gradient-to-l from-blue-500/10 via-transparent to-violet-500/10 blur-xl" />
+      </div>
+      <section className="py-20 relative" data-gsap="fade-up" data-gsap-delay="0.15">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center space-y-16">
             <div className="space-y-6 animate-fade-in-up">
               <h2 className="text-hero font-light tracking-tight text-balance">
-                Contemporary Architectural Excellence
+                Contemporary Sri Lankan Property Excellence
               </h2>
               <p className="text-lg text-muted-foreground text-balance leading-relaxed max-w-2xl mx-auto">
                 Discover exceptional properties through our curated marketplace, where architectural innovation meets
@@ -148,11 +227,11 @@ export default function LandingPage() {
                   <div className="glass-card rounded-2xl p-6 backdrop-blur-xl">
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
-                        <h3 className="text-2xl font-semibold text-white">Modern Residential Complex</h3>
-                        <div className="flex items-center gap-4 text-white/80">
+                        <h3 className="text-2xl font-semibold text-black">Colombo 07 Luxury Residence</h3>
+                        <div className="flex items-center gap-4 text-black/80">
                           <div className="flex items-center gap-1">
                             <MapPin className="h-4 w-4" />
-                            <span className="text-sm">Mumbai, Maharashtra</span>
+                            <span className="text-sm">Colombo 07, Sri Lanka</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="h-4 w-4" />
@@ -161,8 +240,8 @@ export default function LandingPage() {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-3xl font-bold text-white">₹2.5Cr</div>
-                        <div className="text-sm text-white/80">Starting Price</div>
+                        <div className="text-3xl font-bold text-black">LKR 185M</div>
+                        <div className="text-sm text-black/80">Guide Price</div>
                       </div>
                     </div>
                   </div>
@@ -173,14 +252,17 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-24 gradient-accent/10 relative">
+      <div data-divider data-divider-dir="left" className="h-14 relative -mt-4 -mb-4">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-violet-500/10 blur-lg" />
+      </div>
+      <section className="py-24 gradient-accent/10 relative" data-gsap="fade-up" data-gsap-stagger="0.1">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {[
-              { value: "10,000+", label: "Properties Listed", icon: Building2 },
-              { value: "95%", label: "Match Success Rate", icon: Shield },
-              { value: "24hrs", label: "Average Response", icon: Clock },
-              { value: "5,000+", label: "Happy Buyers", icon: Users },
+              { value: "8,200+", label: "Listings Islandwide", icon: Building2 },
+              { value: "92%", label: "Successful Matches", icon: Shield },
+              { value: "12hrs", label: "Avg Response", icon: Clock },
+              { value: "5,000+", label: "Verified Buyers", icon: Users },
             ].map((stat, index) => (
               <div
                 key={index}
@@ -202,204 +284,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-24 relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-8 mb-20 animate-fade-in-up">
-            <h2 className="text-hero font-light tracking-tight text-balance">How PropertyHub Works</h2>
-            <p className="text-lg text-muted-foreground text-balance max-w-2xl mx-auto leading-relaxed">
-              Our intelligent matching system connects serious buyers with verified sellers through a streamlined
-              three-step process.
-            </p>
-          </div>
+      {/* Enhanced How It Works Section */}
+      <HowItWorksSection />
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                icon: Search,
-                title: "Submit Requirements",
-                description:
-                  "Define your ideal property with specific location, budget, features, and lifestyle preferences.",
-                delay: "0s",
-              },
-              {
-                icon: Users,
-                title: "Smart Matching",
-                description:
-                  "Our AI algorithm identifies perfect matches and connects you with pre-verified property sellers.",
-                delay: "0.2s",
-              },
-              {
-                icon: Home,
-                title: "Secure Transaction",
-                description:
-                  "Access verified documentation and seller contacts to complete your property purchase safely.",
-                delay: "0.4s",
-              },
-            ].map((step, index) => (
-              <Card
-                key={index}
-                className="glass-card border-primary/10 hover:border-primary/30 transition-all duration-500 hover-lift animate-fade-in-up"
-                style={{ animationDelay: step.delay }}
-              >
-                <CardContent className="text-center p-10 space-y-6">
-                  <div className="w-24 h-24 gradient-primary rounded-3xl flex items-center justify-center mx-auto shadow-xl">
-                    <step.icon className="h-12 w-12 text-primary-foreground" />
-                  </div>
-                  <h3 className="text-2xl font-semibold">{step.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed text-lg">{step.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 to-white relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center space-y-8 mb-20 animate-fade-in-up">
-            <h2 className="text-hero font-light tracking-tight text-balance">Choose Your Plan</h2>
-            <p className="text-lg text-muted-foreground text-balance max-w-2xl mx-auto leading-relaxed">
-              Select the perfect plan for your property journey. All plans include our intelligent matching system and
-              verified seller network.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                name: "Basic",
-                price: "₹999",
-                period: "/month",
-                description: "Perfect for first-time buyers",
-                features: [
-                  "5 Property Requests",
-                  "Basic Matching Algorithm",
-                  "Email Support",
-                  "Property Documentation Access",
-                  "Mobile App Access",
-                ],
-                popular: false,
-                buttonText: "Get Started",
-                delay: "0s",
-              },
-              {
-                name: "Premium",
-                price: "₹2,499",
-                period: "/month",
-                description: "Most popular for serious buyers",
-                features: [
-                  "Unlimited Property Requests",
-                  "Advanced AI Matching",
-                  "Priority Support",
-                  "Verified Seller Contacts",
-                  "Property History Reports",
-                  "Virtual Property Tours",
-                  "Dedicated Relationship Manager",
-                ],
-                popular: true,
-                buttonText: "Start Premium",
-                delay: "0.2s",
-              },
-              {
-                name: "Enterprise",
-                price: "₹4,999",
-                period: "/month",
-                description: "For investors and agencies",
-                features: [
-                  "Everything in Premium",
-                  "Bulk Property Requests",
-                  "Investment Analytics",
-                  "Market Insights Dashboard",
-                  "API Access",
-                  "Custom Integrations",
-                  "24/7 Phone Support",
-                  "Legal Document Review",
-                ],
-                popular: false,
-                buttonText: "Contact Sales",
-                delay: "0.4s",
-              },
-            ].map((plan, index) => (
-              <Card
-                key={index}
-                className={`relative glass-card transition-all duration-500 hover-lift animate-fade-in-up ${
-                  plan.popular
-                    ? "border-blue-500/50 shadow-xl shadow-blue-500/20 scale-105"
-                    : "border-primary/10 hover:border-primary/30"
-                }`}
-                style={{ animationDelay: plan.delay }}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-600 text-white px-4 py-1 text-sm font-medium">Most Popular</Badge>
-                  </div>
-                )}
-                <CardContent className="p-8 space-y-6">
-                  <div className="text-center space-y-2">
-                    <h3 className="text-2xl font-semibold">{plan.name}</h3>
-                    <p className="text-muted-foreground">{plan.description}</p>
-                  </div>
-
-                  <div className="text-center space-y-1">
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-4xl font-bold text-blue-600">{plan.price}</span>
-                      <span className="text-muted-foreground">{plan.period}</span>
-                    </div>
-                  </div>
-
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <div className="w-2 h-2 rounded-full bg-blue-600"></div>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className={`w-full py-3 font-medium transition-all duration-300 ${
-                      plan.popular
-                        ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl"
-                        : "bg-transparent border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-                    }`}
-                    asChild
-                  >
-                    <Link href="/auth" className="flex items-center justify-center gap-2">
-                      {plan.buttonText}
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-12 animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
-            <p className="text-muted-foreground mb-4">All plans include a 14-day free trial</p>
-            <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Shield className="h-4 w-4 text-blue-600" />
-                <span>Secure Payments</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-blue-600" />
-                <span>24/7 Support</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-blue-600" />
-                <span>Cancel Anytime</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Enhanced Interactive Pricing Section */}
+      <PricingSection />
 
       {/* CTA Section */}
-      <section className="py-24 gradient-hero relative overflow-hidden">
+  <section className="py-24 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-6 text-center relative">
           <div className="max-w-4xl mx-auto space-y-10 animate-fade-in-up">
@@ -407,7 +299,7 @@ export default function LandingPage() {
               Begin Your Property Journey Today
             </h2>
             <p className="text-xl text-primary-foreground/90 text-balance leading-relaxed max-w-2xl mx-auto">
-              Join thousands of satisfied buyers who discovered their perfect property match through PropertyHub's
+              Join thousands of satisfied buyers who discovered their perfect property match through Property Scout's
               intelligent marketplace.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center pt-4">
@@ -444,7 +336,7 @@ export default function LandingPage() {
                   <Building2 className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <span className="text-2xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  PropertyHub
+                  Property Scout
                 </span>
               </div>
               <p className="text-muted-foreground leading-relaxed">
@@ -501,7 +393,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-border/50 mt-16 pt-10 text-center text-muted-foreground">
-            <p>&copy; 2024 PropertyHub. All rights reserved.</p>
+            <p>&copy; 2025 Property Scout. All rights reserved.</p>
           </div>
         </div>
       </footer>

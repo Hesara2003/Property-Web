@@ -8,9 +8,9 @@ import Link from "next/link"
 export default function HelpPage() {
   const faqs = [
     {
-      question: "How does PropertyHub's matching system work?",
+      question: "How does Property Scout's matching system work?",
       answer:
-        "Our AI-powered system analyzes your requirements and matches you with properties that meet your specific criteria, including location, budget, amenities, and preferences.",
+        "Our AI-powered system analyzes your requirements and matches you with properties that meet your specific criteria, including location, budget (LKR), amenities, and preferences across Sri Lankan cities.",
     },
     {
       question: "Are all sellers verified on the platform?",
@@ -18,14 +18,14 @@ export default function HelpPage() {
         "Yes, we verify all sellers through a comprehensive process including document verification, property ownership proof, and background checks.",
     },
     {
-      question: "What fees does PropertyHub charge?",
+      question: "What fees does Property Scout charge?",
       answer:
-        "PropertyHub is free for buyers. Sellers pay a small success fee only when a transaction is completed through our platform.",
+        "Property Scout is free for buyers. Sellers pay a transparent success fee only when a transaction is completed through our platform.",
     },
     {
       question: "How long does it take to find matches?",
       answer:
-        "Most buyers receive their first matches within 24 hours of creating a request. Our average response time is under 4 hours.",
+        "Most buyers receive their first matches within 24 hours of creating a request. Our average initial response time is under 4 hours.",
     },
     {
       question: "Can I contact sellers directly?",
@@ -77,7 +77,7 @@ export default function HelpPage() {
                 <Building2 className="h-7 w-7 text-primary-foreground" />
               </div>
               <span className="text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                PropertyHub
+                Property Scout
               </span>
             </div>
 
@@ -180,7 +180,7 @@ export default function HelpPage() {
         <section className="mb-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-light tracking-tight mb-4">Frequently Asked Questions</h2>
-            <p className="text-lg text-muted-foreground">Quick answers to common questions about PropertyHub</p>
+            <p className="text-lg text-muted-foreground">Quick answers to common questions about Property Scout in Sri Lanka</p>
           </div>
 
           <div className="max-w-4xl mx-auto space-y-4">
@@ -239,9 +239,7 @@ export default function HelpPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Phone Support</h3>
                 <p className="text-muted-foreground mb-4">Speak with our experts directly</p>
-                <Button variant="outline" className="w-full bg-transparent">
-                  +91 1800 123 4567
-                </Button>
+                <Button variant="outline" className="w-full bg-transparent">+94 11 234 5678</Button>
               </CardContent>
             </Card>
           </div>
@@ -258,7 +256,7 @@ export default function HelpPage() {
                   <Building2 className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <span className="text-2xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  PropertyHub
+                  Property Scout
                 </span>
               </div>
               <p className="text-muted-foreground leading-relaxed">
@@ -318,7 +316,7 @@ export default function HelpPage() {
             </div>
           </div>
           <div className="border-t border-border/50 mt-16 pt-10 text-center text-muted-foreground">
-            <p>&copy; 2024 PropertyHub. All rights reserved.</p>
+            <p>&copy; 2025 Property Scout. All rights reserved.</p>
           </div>
         </div>
       </footer>

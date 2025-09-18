@@ -12,9 +12,26 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "PropertyHub - Premium Property Marketplace",
-  description: "Connect with verified sellers through intelligent property matching",
-  generator: "v0.app",
+  title: "Property Scout – Sri Lanka's Intelligent Property Marketplace",
+  description:
+    "Discover and match with verified properties across Colombo, Kandy, Galle, Jaffna & beyond using AI-driven insights.",
+  keywords: [
+    "Sri Lanka property",
+    "Colombo real estate",
+    "Property Scout",
+    "apartments Colombo",
+    "lands Sri Lanka",
+    "houses for sale Sri Lanka",
+  ],
+  openGraph: {
+    title: "Property Scout – Intelligent Property Matching in Sri Lanka",
+    description:
+      "AI-powered platform connecting serious buyers with verified sellers across Sri Lanka's key cities.",
+    locale: "en_LK",
+    siteName: "Property Scout",
+  },
+  metadataBase: new URL("https://www.example.com"), // TODO: replace with real domain
+  generator: "Property Scout",
 }
 
 export default function RootLayout({
@@ -23,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-region="lk">
       <body className={`font-sans ${poppins.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         <Analytics />

@@ -5,17 +5,19 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Home, Mail, Phone, MapPin, Clock } from "lucide-react"
 import Link from "next/link"
+import GSAPScrollProvider from "@/components/gsap-scroll-provider"
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-background">
+  <GSAPScrollProvider>
+  <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Home className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">PropertyHub</span>
+              <span className="text-2xl font-bold text-foreground">Property Scout</span>
             </div>
             <nav className="hidden md:flex items-center gap-8">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -46,17 +48,17 @@ export default function ContactPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-16">
+  <div className="container mx-auto px-4 py-16" data-gsap="fade-up" data-gsap-stagger="0.15">
         <div className="max-w-4xl mx-auto">
           {/* Header Section */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16" data-gsap="fade-up" data-gsap-delay="0.05">
             <h1 className="text-4xl lg:text-5xl font-bold text-balance mb-6">Get in Touch</h1>
             <p className="text-xl text-muted-foreground text-pretty max-w-2xl mx-auto">
-              Have questions about PropertyHub? We're here to help you find your perfect property match.
+              Have questions about Property Scout in Sri Lanka? We're here to help you find your perfect property match across Colombo, Kandy, Galle, Jaffna and beyond.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-12" data-gsap="fade-up" data-gsap-delay="0.1">
             {/* Contact Form */}
             <Card>
               <CardHeader>
@@ -82,7 +84,7 @@ export default function ContactPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+91 98765 43210" />
+                    <Input id="phone" type="tel" placeholder="+94 71 234 5678" />
                   </div>
 
                   <div className="space-y-2">
@@ -113,7 +115,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-lg mb-2">Email Us</h3>
                       <p className="text-muted-foreground mb-2">Send us an email and we'll respond within 24 hours.</p>
-                      <p className="font-medium">support@propertyhub.com</p>
+                      <p className="font-medium">support@propertyscout.lk</p>
                     </div>
                   </div>
                 </CardContent>
@@ -128,7 +130,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-lg mb-2">Call Us</h3>
                       <p className="text-muted-foreground mb-2">Speak directly with our property experts.</p>
-                      <p className="font-medium">+91 1800 123 4567</p>
+                      <p className="font-medium">+94 11 234 5678</p>
                     </div>
                   </div>
                 </CardContent>
@@ -144,11 +146,11 @@ export default function ContactPage() {
                       <h3 className="font-semibold text-lg mb-2">Visit Us</h3>
                       <p className="text-muted-foreground mb-2">Come visit our office for in-person consultation.</p>
                       <p className="font-medium">
-                        123 Business District
+                        42 Sir Baron Jayatilaka Mawatha
                         <br />
-                        Mumbai, Maharashtra 400001
+                        Colombo 01
                         <br />
-                        India
+                        Sri Lanka
                       </p>
                     </div>
                   </div>
@@ -191,7 +193,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Home className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">PropertyHub</span>
+                <span className="text-xl font-bold">Property Scout</span>
               </div>
               <p className="text-muted-foreground">
                 Connecting buyers and sellers through intelligent property matching.
@@ -245,10 +247,11 @@ export default function ContactPage() {
             </div>
           </div>
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 PropertyHub. All rights reserved.</p>
+            <p>&copy; 2025 Property Scout. All rights reserved.</p>
           </div>
         </div>
       </footer>
     </div>
+    </GSAPScrollProvider>
   )
 }

@@ -1,8 +1,9 @@
+import Link from "next/link"
+import { Home, Target, Shield, Users, TrendingUp, Award } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Home, Users, Shield, Target, Award, TrendingUp } from "lucide-react"
-import Link from "next/link"
+import { SplitTextReveal } from "@/components/split-text-reveal"
 
 export default function AboutPage() {
   return (
@@ -13,7 +14,7 @@ export default function AboutPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Home className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">PropertyHub</span>
+              <span className="text-2xl font-bold text-foreground">Property Scout</span>
             </div>
             <nav className="hidden md:flex items-center gap-8">
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -49,18 +50,19 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <Badge variant="secondary" className="mb-6">
-              About PropertyHub
+              About Property Scout
             </Badge>
-            <h1 className="text-4xl lg:text-6xl font-bold text-balance mb-8">
-              Revolutionizing Property
-              <span className="text-primary block">Discovery & Matching</span>
-            </h1>
+            <SplitTextReveal
+              text="Revolutionizing Property Discovery & Matching"
+              as="h1"
+              className="text-4xl lg:text-6xl font-bold text-balance mb-8"
+            />
             <p className="text-xl text-muted-foreground text-pretty leading-relaxed mb-8">
-              PropertyHub is India's most intelligent property matching platform, connecting serious buyers with
-              verified sellers through advanced AI-powered algorithms and personalized service.
+              Property Scout is Sri Lanka's intelligent property matching platform, connecting serious buyers with
+              verified sellers across Colombo, Kandy, Galle, Jaffna, and emerging suburban growth corridors through advanced AI-powered algorithms and localized market insight.
             </p>
             <Button size="lg" asChild>
-              <Link href="/auth">Join PropertyHub Today</Link>
+              <Link href="/auth">Join Property Scout Today</Link>
             </Button>
           </div>
         </div>
@@ -73,8 +75,9 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl lg:text-4xl font-bold mb-6">Our Mission</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                To simplify property transactions by creating meaningful connections between buyers and sellers,
-                eliminating the traditional hassles of property search through intelligent matching technology.
+                To simplify Sri Lankan property transactions by creating meaningful connections between buyers and
+                sellers, eliminating fragmented broker dependency and reducing time-to-discovery through localized
+                intelligent matching technology.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
@@ -100,9 +103,9 @@ export default function AboutPage() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-muted">
                 <img
-                  src="/modern-office-collaboration.png"
-                  alt="PropertyHub team"
-                  className="w-full h-full object-cover"
+                  src="/colombo-skyline.svg"
+                  alt="Colombo skyline illustration"
+                  className="w-full h-full object-cover dark:opacity-90"
                 />
               </div>
             </div>
@@ -114,7 +117,15 @@ export default function AboutPage() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-6">Why Choose PropertyHub?</h2>
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <img src="/galle-fort.svg" alt="Galle Fort" className="h-12 w-12 hidden sm:block rounded" />
+              <SplitTextReveal
+                text="Why Choose Property Scout?"
+                as="h2"
+                className="text-3xl lg:text-4xl font-bold text-center"
+                delay={0.05}
+              />
+            </div>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               We've reimagined property discovery with technology and personalized service at its core.
             </p>
@@ -176,7 +187,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="text-xl font-semibold">Success Guarantee</h3>
                 <p className="text-muted-foreground">
-                  95% of our users find their perfect match within 30 days or get premium support.
+                  92% of active users find a verified match within 30 days or receive extended premium support.
                 </p>
               </CardContent>
             </Card>
@@ -197,29 +208,30 @@ export default function AboutPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
+        <img src="/kandy-temple.svg" alt="Kandy Temple" className="absolute inset-0 w-full h-full object-cover opacity-[0.05] pointer-events-none" />
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">PropertyHub by Numbers</h2>
-            <p className="text-xl opacity-90">Trusted by thousands of property buyers and sellers across India</p>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Property Scout by Numbers</h2>
+            <p className="text-xl opacity-90">Trusted by an expanding community of property buyers and sellers across Sri Lanka</p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl lg:text-5xl font-bold mb-2">10,000+</div>
-              <div className="text-lg opacity-90">Active Users</div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">7,800+</div>
+              <div className="text-lg opacity-90">Active Users (Monthly)</div>
             </div>
             <div>
-              <div className="text-4xl lg:text-5xl font-bold mb-2">5,000+</div>
-              <div className="text-lg opacity-90">Properties Matched</div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">4,300+</div>
+              <div className="text-lg opacity-90">Matches Facilitated</div>
             </div>
             <div>
-              <div className="text-4xl lg:text-5xl font-bold mb-2">95%</div>
-              <div className="text-lg opacity-90">Success Rate</div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">92%</div>
+              <div className="text-lg opacity-90">Verified Match Rate</div>
             </div>
             <div>
-              <div className="text-4xl lg:text-5xl font-bold mb-2">24h</div>
-              <div className="text-lg opacity-90">Average Response Time</div>
+              <div className="text-4xl lg:text-5xl font-bold mb-2">12h</div>
+              <div className="text-lg opacity-90">Median Response Time</div>
             </div>
           </div>
         </div>
@@ -231,7 +243,7 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto space-y-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-balance">Ready to Find Your Perfect Property?</h2>
             <p className="text-xl text-muted-foreground text-pretty">
-              Join PropertyHub today and experience the future of property discovery. Create your first request and get
+              Join Property Scout today and experience the future of property discovery in Sri Lanka. Create your first request and get
               matched with verified sellers instantly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -253,7 +265,7 @@ export default function AboutPage() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Home className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">PropertyHub</span>
+                <span className="text-xl font-bold">Property Scout</span>
               </div>
               <p className="text-muted-foreground">
                 Connecting buyers and sellers through intelligent property matching.
@@ -307,7 +319,7 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 PropertyHub. All rights reserved.</p>
+            <p>&copy; 2025 Property Scout. All rights reserved.</p>
           </div>
         </div>
       </footer>

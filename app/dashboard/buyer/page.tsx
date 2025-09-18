@@ -19,45 +19,32 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Plus,
-  Search,
-  MapPin,
-  Home,
-  Bell,
-  User,
-  Settings,
-  LogOut,
-  Eye,
-  Star,
-  Calendar,
-  IndianRupee,
-} from "lucide-react"
+import { Plus, Search, MapPin, Home, Bell, User, Settings, LogOut, Eye, Star, Calendar } from "lucide-react"
 import Link from "next/link"
 
 // Mock data
 const mockRequests = [
   {
     id: 1,
-    title: "3 BHK Apartment in Bandra",
-    location: "Bandra West, Mumbai",
-    minPrice: 25000000,
-    maxPrice: 35000000,
+    title: "4BR Apartment in Colombo 07",
+    location: "Colombo 07, Sri Lanka",
+    minPrice: 120000000,
+    maxPrice: 160000000,
     status: "active",
-    matches: 8,
-    createdAt: "2024-01-15",
-    description: "Looking for a spacious 3 BHK apartment with modern amenities",
+    matches: 5,
+    createdAt: "2025-01-15",
+    description: "Looking for a modern apartment with backup power, parking and security",
   },
   {
     id: 2,
-    title: "Villa in Goa",
-    location: "North Goa",
-    minPrice: 15000000,
-    maxPrice: 25000000,
+    title: "Beachfront Villa in Galle",
+    location: "Talpe, Galle",
+    minPrice: 180000000,
+    maxPrice: 250000000,
     status: "active",
-    matches: 3,
-    createdAt: "2024-01-10",
-    description: "Seeking a beautiful villa near the beach",
+    matches: 2,
+    createdAt: "2025-01-10",
+    description: "Seeking a premium villa with ocean frontage suitable for holiday rental income",
   },
 ]
 
@@ -65,41 +52,41 @@ const mockMatches = [
   {
     id: 1,
     requestId: 1,
-    title: "Luxury 3 BHK in Bandra West",
-    price: 32000000,
-    location: "Bandra West, Mumbai",
+    title: "Luxury 4BR Colombo 07 Apartment",
+    price: 145000000,
+    location: "Colombo 07, Sri Lanka",
     matchScore: 95,
     verified: true,
     locked: false,
     image: "/luxury-apartment-bandra.jpg",
-    seller: "Premium Properties",
-    features: ["3 BHK", "2400 sq ft", "Sea View", "Parking"],
+    seller: "Prime Residencies",
+    features: ["4BR", "2500 sq ft", "City View", "Parking"],
   },
   {
     id: 2,
     requestId: 1,
-    title: "Modern 3 BHK Apartment",
-    price: 28000000,
-    location: "Bandra West, Mumbai",
+    title: "Modern Apartment With Amenities",
+    price: 132000000,
+    location: "Colombo 07, Sri Lanka",
     matchScore: 88,
     verified: true,
     locked: true,
     image: "/modern-apartment-mumbai.png",
-    seller: "Elite Realty",
-    features: ["3 BHK", "2200 sq ft", "Gym", "Pool"],
+    seller: "Urban Realty",
+    features: ["4BR", "2300 sq ft", "Gym", "Pool"],
   },
   {
     id: 3,
     requestId: 2,
-    title: "Beachfront Villa in North Goa",
-    price: 22000000,
-    location: "Candolim, North Goa",
+    title: "Oceanfront Villa Talpe",
+    price: 210000000,
+    location: "Talpe, Galle",
     matchScore: 92,
     verified: false,
     locked: true,
     image: "/beachfront-villa-goa.jpg",
-    seller: "Coastal Properties",
-    features: ["4 BHK", "3000 sq ft", "Beach Access", "Garden"],
+    seller: "Coastal Estates",
+    features: ["5BR", "3200 sq ft", "Beach Access", "Garden"],
   },
 ]
 
@@ -114,14 +101,7 @@ export default function BuyerDashboard() {
     // In real app, would trigger matching algorithm
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
+  const formatPrice = (price: number) => new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR", maximumFractionDigits: 0 }).format(price)
 
   return (
     <div className="min-h-screen bg-background">
@@ -131,7 +111,7 @@ export default function BuyerDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Home className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">PropertyHub</span>
+              <span className="text-2xl font-bold text-foreground">Property Scout</span>
             </div>
             <nav className="hidden md:flex items-center gap-6">
               <Link href="/dashboard/buyer" className="text-primary font-medium">
@@ -256,11 +236,11 @@ export default function BuyerDashboard() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Request Title</Label>
-                      <Input id="title" placeholder="e.g., 3 BHK Apartment in Bandra" required />
+                      <Input id="title" placeholder="e.g., 4BR Apartment in Colombo 07" required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="location">Location</Label>
-                      <Input id="location" placeholder="e.g., Bandra West, Mumbai" required />
+                      <Input id="location" placeholder="e.g., Colombo 07" required />
                     </div>
                   </div>
 
@@ -360,7 +340,7 @@ export default function BuyerDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
-                          <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-xs font-semibold text-muted-foreground">LKR</span>
                           <span className="text-sm text-muted-foreground">
                             {formatPrice(request.minPrice)} - {formatPrice(request.maxPrice)}
                           </span>
