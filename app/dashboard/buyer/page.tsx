@@ -19,8 +19,39 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Search, MapPin, Home, Bell, User, Settings, LogOut, Eye, Star, Calendar } from "lucide-react"
+import { Plus, Search, MapPin, Home, Bell, User, Settings, LogOut, Eye, Star, Calendar, Percent, Filter } from "lucide-react"
 import Link from "next/link"
+
+// Types for dynamic request criteria
+interface PurchaseRequestCriteria {
+  title: string
+  location: string
+  description: string
+  minPrice: number
+  maxPrice: number
+  maxFloors?: string
+  ownershipType?: string
+  features?: string[]
+  keywords?: string[]
+  // Which criteria matter for scoring
+  scoring: {
+    location: boolean
+    priceRange: boolean
+    features: boolean
+    ownershipType: boolean
+    maxFloors: boolean
+    keywords: boolean
+  }
+}
+
+const CRITERION_LABELS: Record<string, string> = {
+  location: "Location",
+  priceRange: "Price Range",
+  features: "Features",
+  ownershipType: "Ownership Type",
+  maxFloors: "Max Floors",
+  keywords: "Keywords",
+}
 
 // Mock data
 const mockRequests = [
@@ -34,6 +65,25 @@ const mockRequests = [
     matches: 5,
     createdAt: "2025-01-15",
     description: "Looking for a modern apartment with backup power, parking and security",
+    criteria: {
+      title: "4BR Apartment in Colombo 07",
+      location: "Colombo 07, Sri Lanka",
+      description: "Looking for a modern apartment with backup power, parking and security",
+      minPrice: 120000000,
+      maxPrice: 160000000,
+      scoring: {
+        location: true,
+        priceRange: true,
+        features: true,
+        ownershipType: false,
+        maxFloors: false,
+        keywords: false,
+      },
+      features: ["Parking", "Security"],
+      ownershipType: "owner",
+      maxFloors: "any",
+      keywords: ["modern"],
+    } as PurchaseRequestCriteria,
   },
   {
     id: 2,
@@ -45,6 +95,25 @@ const mockRequests = [
     matches: 2,
     createdAt: "2025-01-10",
     description: "Seeking a premium villa with ocean frontage suitable for holiday rental income",
+    criteria: {
+      title: "Beachfront Villa in Galle",
+      location: "Talpe, Galle",
+      description: "Seeking a premium villa with ocean frontage suitable for holiday rental income",
+      minPrice: 180000000,
+      maxPrice: 250000000,
+      scoring: {
+        location: true,
+        priceRange: true,
+        features: true,
+        ownershipType: true,
+        maxFloors: false,
+        keywords: true,
+      },
+      features: ["Beach Access", "Garden"],
+      ownershipType: "owner",
+      maxFloors: "any",
+      keywords: ["ocean", "rental"],
+    } as PurchaseRequestCriteria,
   },
 ]
 
@@ -60,7 +129,10 @@ const mockMatches = [
     locked: false,
     image: "/luxury-apartment-bandra.jpg",
     seller: "Prime Residencies",
-    features: ["4BR", "2500 sq ft", "City View", "Parking"],
+    features: ["4BR", "2500 sq ft", "City View", "Parking", "Security"],
+    ownershipType: "owner",
+    maxFloors: "any",
+    keywords: ["modern", "city"],
   },
   {
     id: 2,
@@ -74,6 +146,9 @@ const mockMatches = [
     image: "/modern-apartment-mumbai.png",
     seller: "Urban Realty",
     features: ["4BR", "2300 sq ft", "Gym", "Pool"],
+    ownershipType: "agent",
+    maxFloors: "10",
+    keywords: ["amenities", "gym"],
   },
   {
     id: 3,
@@ -87,21 +162,130 @@ const mockMatches = [
     image: "/beachfront-villa-goa.jpg",
     seller: "Coastal Estates",
     features: ["5BR", "3200 sq ft", "Beach Access", "Garden"],
+    ownershipType: "owner",
+    maxFloors: "any",
+    keywords: ["oceanfront", "holiday"],
   },
 ]
 
 export default function BuyerDashboard() {
   const [isCreateRequestOpen, setIsCreateRequestOpen] = useState(false)
   const [activeTab, setActiveTab] = useState("requests")
+  const [requests, setRequests] = useState(mockRequests)
+
+  // Form state for new request
+  const [scoring, setScoring] = useState({
+    location: true,
+    priceRange: true,
+    features: false,
+    ownershipType: false,
+    maxFloors: false,
+    keywords: false,
+  })
+  const [selectedCriteria, setSelectedCriteria] = useState<string[]>(["location", "priceRange"]) // drives visible fields
+
+  const toggleCriterion = (key: string) => {
+    setSelectedCriteria(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key])
+    setScoring(prev => ({ ...prev, [key]: !prev[key as keyof typeof prev] }))
+  }
 
   const handleCreateRequest = (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulate request creation
+    const form = e.target as HTMLFormElement
+    const formData = new FormData(form)
+    const featuresRaw = (formData.get("features") as string)?.split(",").map(f => f.trim()).filter(Boolean) || []
+    const keywordsRaw = (formData.get("keywords") as string)?.split(",").map(f => f.trim()).filter(Boolean) || []
+
+    const newReq = {
+      id: Date.now(),
+      title: formData.get("title") as string,
+      location: formData.get("location") as string,
+      minPrice: Number(formData.get("minPrice")),
+      maxPrice: Number(formData.get("maxPrice")),
+      status: "active",
+      matches: 0,
+      createdAt: new Date().toISOString().slice(0, 10),
+      description: formData.get("description") as string,
+      criteria: {
+        title: formData.get("title") as string,
+        location: formData.get("location") as string,
+        description: formData.get("description") as string,
+        minPrice: Number(formData.get("minPrice")),
+        maxPrice: Number(formData.get("maxPrice")),
+        maxFloors: formData.get("maxFloors") as string | undefined,
+        ownershipType: formData.get("ownershipType") as string | undefined,
+        features: featuresRaw,
+        keywords: keywordsRaw,
+        scoring,
+      } as PurchaseRequestCriteria,
+    }
+
+    setRequests(prev => [newReq, ...prev])
     setIsCreateRequestOpen(false)
-    // In real app, would trigger matching algorithm
+    form.reset()
+    // Reset scoring to default
+    setScoring(scoring)
   }
 
   const formatPrice = (price: number) => new Intl.NumberFormat("en-LK", { style: "currency", currency: "LKR", maximumFractionDigits: 0 }).format(price)
+
+  // Simple percentage scoring function based on selected criteria
+  const computeMatchPercentage = (req: any, match: any) => {
+    const crit: PurchaseRequestCriteria = req.criteria
+    const enabled = crit.scoring
+    const checks: Array<{ passed: boolean; enabled: boolean }> = []
+
+    // location
+    checks.push({
+      enabled: enabled.location,
+      passed: enabled.location ? match.location.toLowerCase().includes(crit.location.toLowerCase().split(",")[0].trim()) : false,
+    })
+
+    // price range
+    checks.push({
+      enabled: enabled.priceRange,
+      passed: enabled.priceRange ? match.price >= crit.minPrice && match.price <= crit.maxPrice : false,
+    })
+
+    // features (at least half of desired features present)
+    checks.push({
+      enabled: enabled.features,
+      passed: enabled.features && crit.features && crit.features.length > 0 ?
+        (crit.features.filter(f => match.features?.some((mf: string) => mf.toLowerCase() === f.toLowerCase())).length / crit.features.length) >= 0.5 : false,
+    })
+
+    // ownership type
+    checks.push({
+      enabled: enabled.ownershipType,
+      passed: enabled.ownershipType && crit.ownershipType ? match.ownershipType === crit.ownershipType : false,
+    })
+
+    // max floors (simple equality/any)
+    checks.push({
+      enabled: enabled.maxFloors,
+      passed: enabled.maxFloors && crit.maxFloors ? crit.maxFloors === 'any' || match.maxFloors === crit.maxFloors : false,
+    })
+
+    // keywords overlap (at least one)
+    checks.push({
+      enabled: enabled.keywords,
+      passed: enabled.keywords && crit.keywords && crit.keywords.length > 0 ?
+        crit.keywords.some(k => match.keywords?.some((mk: string) => mk.toLowerCase().includes(k.toLowerCase()))) : false,
+    })
+
+    const enabledCount = checks.filter(c => c.enabled).length || 1
+    const passedCount = checks.filter(c => c.enabled && c.passed).length
+    const percent = Math.round((passedCount / enabledCount) * 100)
+
+    return { percent, breakdown: checks }
+  }
+
+  const renderMatchBadge = (percent: number) => {
+    let variant: string = "secondary"
+    if (percent >= 80) variant = "default"
+    else if (percent >= 60) variant = "outline"
+    return <Badge variant={variant as any} className="flex items-center gap-1">{percent}% match</Badge>
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -160,7 +344,7 @@ export default function BuyerDashboard() {
                   <Search className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-foreground">2</div>
+                  <div className="text-2xl font-bold text-foreground">{requests.length}</div>
                   <div className="text-sm text-muted-foreground">Active Requests</div>
                 </div>
               </div>
@@ -195,19 +379,19 @@ export default function BuyerDashboard() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Eye className="h-6 w-6 text-blue-600" />
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <Eye className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">1</div>
+                    <div className="text-sm text-muted-foreground">Unlocked</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">1</div>
-                  <div className="text-sm text-muted-foreground">Unlocked</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
         </div>
 
         {/* Main Content */}
@@ -229,18 +413,18 @@ export default function BuyerDashboard() {
                 <DialogHeader>
                   <DialogTitle>Create Purchase Request</DialogTitle>
                   <DialogDescription>
-                    Tell us what you're looking for and we'll find matching properties for you.
+                    Tell us what you're looking for and pick which criteria should influence match scoring.
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleCreateRequest} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">Request Title</Label>
-                      <Input id="title" placeholder="e.g., 4BR Apartment in Colombo 07" required />
+                      <Input id="title" name="title" placeholder="e.g., 4BR Apartment in Colombo 07" required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="location">Location</Label>
-                      <Input id="location" placeholder="e.g., Colombo 07" required />
+                      <Input id="location" name="location" placeholder="e.g., Colombo 07" required />
                     </div>
                   </div>
 
@@ -248,6 +432,7 @@ export default function BuyerDashboard() {
                     <Label htmlFor="description">Description</Label>
                     <Textarea
                       id="description"
+                      name="description"
                       placeholder="Describe your ideal property, preferred amenities, and any specific requirements..."
                       rows={3}
                       required
@@ -257,18 +442,52 @@ export default function BuyerDashboard() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="minPrice">Minimum Price</Label>
-                      <Input id="minPrice" type="number" placeholder="25000000" required />
+                      <Input id="minPrice" name="minPrice" type="number" placeholder="25000000" required />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="maxPrice">Maximum Price</Label>
-                      <Input id="maxPrice" type="number" placeholder="35000000" required />
+                      <Input id="maxPrice" name="maxPrice" type="number" placeholder="35000000" required />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="border rounded-lg p-4 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4 text-primary" />
+                      <h4 className="font-medium">Select Match Criteria</h4>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Pick only the aspects you care about. We'll match & score using just these.</p>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(scoring).map(([key]) => (
+                        <button
+                          type="button"
+                          key={key}
+                          onClick={() => toggleCriterion(key)}
+                          className={`text-xs px-3 py-1.5 rounded-full border transition ${selectedCriteria.includes(key) ? 'bg-primary text-primary-foreground border-primary' : 'bg-muted hover:bg-muted/70'}`}
+                        >
+                          {CRITERION_LABELS[key] || key}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Conditional fields */}
+                  {selectedCriteria.includes('priceRange') && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="minPrice">Minimum Price</Label>
+                        <Input id="minPrice" name="minPrice" type="number" placeholder="25000000" required={selectedCriteria.includes('priceRange')} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="maxPrice">Maximum Price</Label>
+                        <Input id="maxPrice" name="maxPrice" type="number" placeholder="35000000" required={selectedCriteria.includes('priceRange')} />
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedCriteria.includes('maxFloors') && (
                     <div className="space-y-2">
                       <Label htmlFor="maxFloors">Maximum Floors</Label>
-                      <Select>
+                      <Select name="maxFloors">
                         <SelectTrigger>
                           <SelectValue placeholder="Select max floors" />
                         </SelectTrigger>
@@ -280,9 +499,12 @@ export default function BuyerDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
+                  )}
+
+                  {selectedCriteria.includes('ownershipType') && (
                     <div className="space-y-2">
                       <Label htmlFor="ownershipType">Preferred Ownership</Label>
-                      <Select>
+                      <Select name="ownershipType">
                         <SelectTrigger>
                           <SelectValue placeholder="Select ownership type" />
                         </SelectTrigger>
@@ -293,16 +515,21 @@ export default function BuyerDashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="features">Must-Have Features</Label>
-                    <Input id="features" placeholder="e.g., Parking, Gym, Swimming Pool, Security" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="keywords">Keywords</Label>
-                    <Input id="keywords" placeholder="e.g., sea view, modern, luxury, spacious" />
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedCriteria.includes('features') && (
+                      <div className="space-y-2">
+                        <Label htmlFor="features">Must-Have Features (comma separated)</Label>
+                        <Input id="features" name="features" placeholder="Parking, Security, Pool" />
+                      </div>
+                    )}
+                    {selectedCriteria.includes('keywords') && (
+                      <div className="space-y-2">
+                        <Label htmlFor="keywords">Keywords (comma separated)</Label>
+                        <Input id="keywords" name="keywords" placeholder="modern, sea view, luxury" />
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-end gap-3">
@@ -317,12 +544,14 @@ export default function BuyerDashboard() {
           </div>
 
           <TabsContent value="requests" className="space-y-6">
-            {mockRequests.map((request) => (
+            {requests.map((request) => (
               <Card key={request.id}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
-                      <CardTitle className="text-xl">{request.title}</CardTitle>
+                      <CardTitle className="text-xl flex items-center gap-3">{request.title}
+                        <span className="hidden md:inline text-xs font-normal text-muted-foreground border rounded px-2 py-0.5">Active Criteria: {Object.entries(request.criteria.scoring).filter(([,v]) => v).length}</span>
+                      </CardTitle>
                       <CardDescription className="flex items-center gap-2 mt-2">
                         <MapPin className="h-4 w-4" />
                         {request.location}
@@ -337,6 +566,14 @@ export default function BuyerDashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     <p className="text-muted-foreground">{request.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(request.criteria.scoring).filter(([,v]) => v).map(([k]) => (
+                        <span key={k} className="text-[10px] uppercase tracking-wide bg-primary/10 text-primary px-2 py-1 rounded">{k.replace(/([A-Z])/g, ' $1')}</span>
+                      ))}
+                      {(Object.entries(request.criteria.scoring) as [string, boolean][]).every(([,v]) => !v) && (
+                        <span className="text-[10px] uppercase tracking-wide bg-muted text-muted-foreground px-2 py-1 rounded">No criteria selected</span>
+                      )}
+                    </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-1">
@@ -363,18 +600,71 @@ export default function BuyerDashboard() {
           </TabsContent>
 
           <TabsContent value="matches" className="space-y-6">
-            <div className="text-center py-12">
-              <div className="max-w-md mx-auto space-y-4">
-                <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto">
-                  <Search className="h-8 w-8 text-muted-foreground" />
+            {/* For each request show grouped matches with computed percentage */}
+            {requests.map(req => (
+              <div key={req.id} className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold">Matches for: {req.title}</h3>
+                  <Badge variant="secondary" className="text-xs">Criteria: {Object.entries(req.criteria.scoring).filter(([,v]) => v).length}</Badge>
                 </div>
-                <h3 className="text-xl font-semibold">No Matches Yet</h3>
-                <p className="text-muted-foreground">
-                  Create a purchase request to get matched with properties that meet your exact requirements.
-                </p>
-                <Button onClick={() => setIsCreateRequestOpen(true)}>Create Your First Request</Button>
+                {mockMatches.filter(m => m.requestId === req.id).length === 0 && (
+                  <p className="text-sm text-muted-foreground">No matches yet for this request.</p>
+                )}
+                <div className="grid md:grid-cols-2 gap-4">
+                  {mockMatches.filter(m => m.requestId === req.id).map(match => {
+                    const { percent } = computeMatchPercentage(req, match)
+                    return (
+                      <Card key={match.id} className="relative overflow-hidden">
+                        <CardHeader className="pb-2">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <CardTitle className="text-base flex items-center gap-2">
+                                {match.title}
+                                {renderMatchBadge(percent)}
+                              </CardTitle>
+                              <CardDescription className="flex items-center gap-1 mt-1">
+                                <MapPin className="h-3 w-3" /> {match.location}
+                              </CardDescription>
+                            </div>
+                            {match.verified && <Badge variant="outline" className="text-[10px]">Verified</Badge>}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-0 space-y-3">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="font-medium">{formatPrice(match.price)}</span>
+                            <span className="text-xs text-muted-foreground flex items-center gap-1"><Percent className="h-3 w-3" />Match Score</span>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {match.features.slice(0,4).map((f: string) => (
+                              <span key={f} className="text-[10px] bg-muted px-2 py-1 rounded">{f}</span>
+                            ))}
+                          </div>
+                          {match.locked ? (
+                            <Button size="sm" variant="outline" className="w-full justify-center">Unlock Details</Button>
+                          ) : (
+                            <Button size="sm" className="w-full justify-center">View Details</Button>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )
+                  })}
+                </div>
               </div>
-            </div>
+            ))}
+            {requests.length === 0 && (
+              <div className="text-center py-12">
+                <div className="max-w-md mx-auto space-y-4">
+                  <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto">
+                    <Search className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold">No Matches Yet</h3>
+                  <p className="text-muted-foreground">
+                    Create a purchase request to get matched with properties that meet your exact requirements.
+                  </p>
+                  <Button onClick={() => setIsCreateRequestOpen(true)}>Create Your First Request</Button>
+                </div>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>

@@ -14,22 +14,24 @@ interface Plan {
   features: string[]
   popular?: boolean
   tierNote?: string
+  payPerMatch?: number // LKR per individual match unlock when plan itself is free
 }
 
 const plans: Plan[] = [
   {
     name: "Basic",
-    monthly: 4900,
-    annual: 4900 * 12 * 0.85, // 15% off
-    description: "Great for first-time buyers starting their search",
+    monthly: 0,
+    annual: 0,
+    description: "Free access – pay only when you unlock a full match",
     features: [
-      "5 Property Requests / month",
-      "Essential AI Matching",
-      "Email Support",
-      "Core Documentation Access",
+      "Browse Match Summaries",
+      "Core AI Preview Scoring",
+      "Pay-as-you-go Unlocks",
       "Saved Searches",
+      "Email Support",
       "Mobile Access",
     ],
+    payPerMatch: 990,
   },
   {
     name: "Premium",
@@ -101,7 +103,7 @@ export function PricingSection() {
             Choose Your Plan <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">({annual ? 'Annual' : 'Monthly'})</span>
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Transparent pricing tuned for the Sri Lankan market. Start with a 14‑day free trial and upgrade as your journey accelerates.
+            Start free. Unlock individual matches only when you need full details—or upgrade for unlimited access & deeper intelligence.
           </p>
           <div className="flex items-center justify-center gap-4 pt-4">
             <div className="flex items-center gap-2 text-sm font-medium">
@@ -131,7 +133,7 @@ export function PricingSection() {
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {plans.map((plan, i) => {
             const price = annual ? plan.annual : plan.monthly
-            const perMonthEquivalent = annual ? Math.round(plan.annual / 12) : plan.monthly
+            const perMonthEquivalent = annual ? (plan.annual > 0 ? Math.round(plan.annual / 12) : 0) : plan.monthly
             return (
               <Card
                 key={plan.name}
@@ -148,7 +150,7 @@ export function PricingSection() {
                     {plan.tierNote || 'Popular'}
                   </Badge>
                 )}
-                {annual && (
+                {annual && price > 0 && (
                   <div className="absolute top-4 right-4 text-[10px] font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-700 border border-green-500/30">
                     Save {savings(plan)}%
                   </div>
@@ -159,15 +161,26 @@ export function PricingSection() {
                     <p className="text-sm text-muted-foreground leading-relaxed">{plan.description}</p>
                   </div>
                   <div className="text-center space-y-1">
-                    <div className="flex items-baseline justify-center gap-2">
-                      <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                        {formatLKR(price)}
-                      </span>
-                      <span className="text-sm text-muted-foreground font-medium">{annual ? ' /year' : ' /month'}</span>
-                    </div>
-                    {annual && (
-                      <div className="text-[11px] text-muted-foreground">
-                        ≈ {formatLKR(perMonthEquivalent)} / month effective
+                    {price > 0 ? (
+                      <>
+                        <div className="flex items-baseline justify-center gap-2">
+                          <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                            {formatLKR(price)}
+                          </span>
+                          <span className="text-sm text-muted-foreground font-medium">{annual ? ' /year' : ' /month'}</span>
+                        </div>
+                        {annual && price > 0 && (
+                          <div className="text-[11px] text-muted-foreground">
+                            ≈ {formatLKR(perMonthEquivalent)} / month effective
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Free</span>
+                        {plan.payPerMatch && (
+                          <span className="text-[11px] font-medium text-muted-foreground">LKR {plan.payPerMatch.toLocaleString()} / match unlock</span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -188,12 +201,12 @@ export function PricingSection() {
                     asChild
                   >
                     <Link href="/auth" className="flex items-center justify-center gap-2">
-                      {plan.popular ? 'Start Premium' : 'Get Started'}
+                      {price === 0 ? 'Create Free Account' : plan.popular ? 'Start Premium' : 'Get Started'}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
                   <div className="text-[11px] text-muted-foreground text-center">
-                    14‑day free trial • Cancel anytime
+                    {price === 0 ? 'Pay only for matches you unlock' : '14‑day free trial • Cancel anytime'}
                   </div>
                 </CardContent>
               </Card>
@@ -244,6 +257,7 @@ export function PricingSection() {
               <tbody>
                 {[
                   'Property Requests',
+                  'Per Match Unlock Pricing',
                   'AI Matching Depth',
                   'Support SLA',
                   'Verified Seller Access',
@@ -259,10 +273,13 @@ export function PricingSection() {
                       let value: string | JSX.Element = '—'
                       switch (feature) {
                         case 'Property Requests':
-                          value = p.name === 'Basic' ? '5 / mo' : (p.name === 'Premium' ? 'Unlimited' : 'Unlimited + Bulk')
+                          value = p.name === 'Basic' ? 'Preview Only' : (p.name === 'Premium' ? 'Unlimited' : 'Unlimited + Bulk')
+                          break
+                        case 'Per Match Unlock Pricing':
+                          value = p.name === 'Basic' ? `LKR ${p.payPerMatch?.toLocaleString()}` : 'Included'
                           break
                         case 'AI Matching Depth':
-                          value = p.name === 'Basic' ? 'Core' : (p.name === 'Premium' ? 'Advanced' : 'Advanced + Predictive')
+                          value = p.name === 'Basic' ? 'Preview' : (p.name === 'Premium' ? 'Advanced' : 'Advanced + Predictive')
                           break
                         case 'Support SLA':
                           value = p.name === 'Basic' ? 'Email 24h' : (p.name === 'Premium' ? 'Priority 4h' : '24/7 Hotline')
