@@ -7,6 +7,7 @@ import GSAPScrollProvider from "@/components/gsap-scroll-provider"
 import { SplitTextReveal } from "@/components/split-text-reveal"
 import { PricingSection } from "@/components/pricing-section"
 import { HowItWorksSection } from "@/components/how-it-works"
+import { StatsEngagementSection } from "@/components/stats-engagement-section"
 import { ScrollProgressBar } from "@/components/scroll-progress"
 
 export default function LandingPage() {
@@ -133,9 +134,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Locations Gallery */}
-      <div data-divider data-divider-dir="left" className="h-20 relative -mt-10 -mb-10">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-violet-500/10 blur-xl" />
-      </div>
+      {/* Removed divider */}
       <section className="py-28 relative overflow-hidden" data-gsap="fade-up" data-gsap-delay="0.1">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/10 rounded-full blur-3xl" />
@@ -198,9 +197,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div data-divider data-divider-dir="right" className="h-16 relative -mt-6 -mb-6">
-        <div className="absolute inset-0 bg-gradient-to-l from-blue-500/10 via-transparent to-violet-500/10 blur-xl" />
-      </div>
+      {/* Removed divider */}
       <section className="py-20 relative" data-gsap="fade-up" data-gsap-delay="0.15">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center space-y-16">
@@ -252,37 +249,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <div data-divider data-divider-dir="left" className="h-14 relative -mt-4 -mb-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-violet-500/10 blur-lg" />
-      </div>
-      <section className="py-24 gradient-accent/10 relative" data-gsap="fade-up" data-gsap-stagger="0.1">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            {[
-              { value: "8,200+", label: "Listings Islandwide", icon: Building2 },
-              { value: "92%", label: "Successful Matches", icon: Shield },
-              { value: "12hrs", label: "Avg Response", icon: Clock },
-              { value: "5,000+", label: "Verified Buyers", icon: Users },
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="text-center space-y-4 animate-fade-in-up hover-lift"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                  <stat.icon className="h-8 w-8 text-primary-foreground" />
-                </div>
-                <div className="space-y-1">
-                  <div className="text-4xl font-light bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Removed divider */}
+  {/* Statistical Engagement Section */}
+  <StatsEngagementSection />
 
       {/* Enhanced How It Works Section */}
       <HowItWorksSection />

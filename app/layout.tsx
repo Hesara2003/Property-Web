@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-region="lk">
-      <body className={`font-sans ${poppins.variable}`}>
+      <body className={`font-sans ${poppins.variable} overflow-x-hidden`}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         <Analytics />
       </body>
