@@ -55,14 +55,14 @@ export default function LandingPage() {
 
             <div className="flex items-center gap-4 animate-slide-in-right">
               <Button variant="ghost" className="hover:bg-primary/10 text-sm font-medium" asChild>
-                <Link href="/auth">Sign In</Link>
+                <Link href="/admin">Admin</Link>
               </Button>
               <Button
                 className="gradient-primary hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-primary/30 text-sm font-medium px-6"
                 asChild
               >
-                <Link href="/auth" className="flex items-center gap-2">
-                  Get Started
+                <Link href="/dashboard" className="flex items-center gap-2">
+                  Dashboard
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -81,7 +81,7 @@ export default function LandingPage() {
           {/* Fixed background image using CSS parallax (background-attachment: fixed on desktop) */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-[url('/modern-luxury-property-exterior-with-glass-windows.jpg')] bg-cover bg-center md:bg-fixed scale-105"
+            className="absolute inset-0 bg-[url('https://safdie-staging.imgix.net/0aa3f522-14a8-448f-b5e8-d7b02c7e62fe/Altair_HeroMedia000.jpg?q=50&w=1600&fit=crop&max_h=900')] bg-cover bg-center md:bg-fixed scale-105"
           />
           {/* Soft overlay gradient (static to reduce motion for accessibility) */}
           <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/50 to-black/60" />
@@ -116,7 +116,7 @@ export default function LandingPage() {
                 className="text-lg px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-blue-600/30 font-medium"
                 asChild
               >
-                <Link href="/auth" className="flex items-center gap-3">
+                <Link href="/dashboard" className="flex items-center gap-3">
                   Start Your Search
                   <ArrowRight className="h-5 w-5" />
                 </Link>
@@ -134,12 +134,11 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Locations Gallery */}
-      {/* Removed divider */}
       <section className="py-28 relative overflow-hidden" data-gsap="fade-up" data-gsap-delay="0.1">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/10 rounded-full blur-3xl" />
         </div>
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 lg:px-24">
           <div className="flex flex-col lg:flex-row lg:items-center gap-16">
             <div className="flex-1 space-y-8">
               <Badge variant="secondary" className="px-4 py-1 text-xs tracking-wider">Featured Locations</Badge>
@@ -169,10 +168,10 @@ export default function LandingPage() {
             <div className="flex-1">
               <div className="grid sm:grid-cols-2 gap-6">
                 {[
-                  { src: "/colombo-skyline.svg", alt: "Colombo Skyline", label: "Colombo 01-07" },
-                  { src: "/galle-fort.svg", alt: "Galle Fort", label: "Galle & South Coast" },
-                  { src: "/kandy-temple.svg", alt: "Kandy Temple", label: "Kandy & Central" },
-                  { src: "/modern-luxury-property-exterior-with-glass-windows.jpg", alt: "Luxury Villa", label: "Coastal Villas" },
+                  { src: "https://mistertlk.s3.ap-southeast-1.amazonaws.com/property/sales/1317_1_1756373538.jpg", alt: "Colombo Skyline", label: "Colombo 01-07" },
+                  { src: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/421542024.jpg?k=42436a5f03c21a376435efe07ab2820e000495d7447536e97177055e96db0b61&o=&hp=1", alt: "Galle Fort", label: "Galle & South Coast" },
+                  { src: "https://www.thehotelguru.com/_images/81/c8/81c8f9a03088cee052ca05c073ed77e1/s1654x900.jpg", alt: "Kandy Temple", label: "Kandy & Central" },
+                  { src: "https://pix10.agoda.net/hotelImages/781758/0/5e6d96bf9ed3525b43db7fa69a9208cb.jpg?ce=0&s=1024x768", alt: "Luxury Villa", label: "Coastal Villas" },
                 ].map((img, i) => (
                   <div
                     key={i}
@@ -197,61 +196,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Removed divider */}
-      <section className="py-20 relative" data-gsap="fade-up" data-gsap-delay="0.15">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center space-y-16">
-            <div className="space-y-6 animate-fade-in-up">
-              <h2 className="text-hero font-light tracking-tight text-balance">
-                Contemporary Sri Lankan Property Excellence
-              </h2>
-              <p className="text-lg text-muted-foreground text-balance leading-relaxed max-w-2xl mx-auto">
-                Discover exceptional properties through our curated marketplace, where architectural innovation meets
-                modern living standards.
-              </p>
-            </div>
-
-            <div className="relative animate-fade-in-scale" style={{ animationDelay: "0.3s" }}>
-              <div className="aspect-[3/2] rounded-3xl overflow-hidden bg-muted relative group shadow-2xl">
-                <img
-                  src="/modern-luxury-property-exterior-with-beautiful-arc.jpg"
-                  alt="Contemporary architectural development"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
-
-                <div className="absolute bottom-8 left-8 right-8">
-                  <div className="glass-card rounded-2xl p-6 backdrop-blur-xl">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <h3 className="text-2xl font-semibold text-black">Colombo 07 Luxury Residence</h3>
-                        <div className="flex items-center gap-4 text-black/80">
-                          <div className="flex items-center gap-1">
-                            <MapPin className="h-4 w-4" />
-                            <span className="text-sm">Colombo 07, Sri Lanka</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            <span className="text-sm">Ready to Move</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-3xl font-bold text-black">LKR 185M</div>
-                        <div className="text-sm text-black/80">Guide Price</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Removed divider */}
-  {/* Statistical Engagement Section */}
-  <StatsEngagementSection />
+      {/* Statistical Engagement Section */}
+      <StatsEngagementSection />
 
       {/* Enhanced How It Works Section */}
       <HowItWorksSection />
@@ -260,7 +206,7 @@ export default function LandingPage() {
       <PricingSection />
 
       {/* CTA Section */}
-  <section className="py-24 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
+      <section className="py-24 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-6 text-center relative">
           <div className="max-w-4xl mx-auto space-y-10 animate-fade-in-up">
@@ -278,7 +224,7 @@ export default function LandingPage() {
                 className="text-lg px-12 py-4 hover:scale-105 transition-all duration-300 shadow-xl font-medium"
                 asChild
               >
-                <Link href="/auth" className="flex items-center gap-3">
+                <Link href="/dashboard" className="flex items-center gap-3">
                   Start Your Search
                   <ArrowRight className="h-5 w-5" />
                 </Link>

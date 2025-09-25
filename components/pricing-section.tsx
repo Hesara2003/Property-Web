@@ -9,63 +9,48 @@ import Link from "next/link"
 interface Plan {
   name: string
   monthly: number
-  annual: number // annual billing total (after discount)
   description: string
   features: string[]
   popular?: boolean
   tierNote?: string
-  payPerMatch?: number // LKR per individual match unlock when plan itself is free
 }
 
 const plans: Plan[] = [
   {
-    name: "Basic",
+    name: "Free",
     monthly: 0,
-    annual: 0,
-    description: "Free access – pay only when you unlock a full match",
+    description: "Get started with limited access",
     features: [
-      "Browse Match Summaries",
-      "Core AI Preview Scoring",
-      "Pay-as-you-go Unlocks",
-      "Saved Searches",
-      "Email Support",
-      "Mobile Access",
+      "Dashboard Access",
+      "3 Property Listings",
+      "3 Buying Requests",
+      "Up to 3 Matches/month",
+      "Free + Verified Pool Access",
+      "Basic Email Notifications",
+      "Email Support Only",
+      "Standard Branding Experience",
     ],
-    payPerMatch: 990,
   },
   {
-    name: "Premium",
-    monthly: 12900,
-    annual: 12900 * 12 * 0.83, // ~2 months free
-    description: "Serious buyers who want faster, richer insight",
+    name: "Verified",
+    monthly: 2000,
+    description: "Full access to verified network",
     features: [
-      "Unlimited Requests",
-      "Advanced AI Confidence Scoring",
-      "Priority Support (4h avg)",
-      "Verified Seller Contacts",
-      "Property History Reports",
-      "Virtual Property Tours",
-      "Saved Market Alerts",
-      "Relationship Manager",
+      "Dashboard Access",
+      "Unlimited Property Listings",
+      "Unlimited Buying Requests",
+      "Unlimited Matches",
+      "Verified-only Matching Pool",
+      "Profile Verification Badge",
+      "Instant Push/Email Notifications",
+      "Full Analytics & Insights",
+      "Priority in Matching",
+      "Priority Chat/Phone Support",
+      "Ad-free Experience",
+      "Verified-only Network Access",
     ],
     popular: true,
-    tierNote: "Most Chosen",
-  },
-  {
-    name: "Enterprise",
-    monthly: 24900,
-    annual: 24900 * 12 * 0.8, // 20% off
-    description: "Investors & agencies scaling portfolios",
-    features: [
-      "Bulk / API Requests",
-      "Investment Analytics Suite",
-      "Portfolio Benchmarking",
-      "Advanced Market Insights",
-      "Custom Integrations",
-      "24/7 Phone Support",
-      "Legal Document Review",
-      "Priority Feature Input",
-    ],
+    tierNote: "Recommended",
   },
 ]
 
@@ -74,15 +59,7 @@ function formatLKR(value: number) {
 }
 
 export function PricingSection() {
-  const [annual, setAnnual] = useState(true)
   const [showCompare, setShowCompare] = useState(false)
-  const billingLabel = annual ? "Annual (Best Value)" : "Monthly"
-  const savings = (plan: Plan) => {
-    const full = plan.monthly * 12
-    const annualTotal = plan.annual
-    const pct = Math.round((1 - annualTotal / full) * 100)
-    return pct
-  }
 
   return (
     <section
@@ -100,40 +77,16 @@ export function PricingSection() {
             <span>Flexible Pricing • Cancel Anytime</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-light tracking-tight text-balance">
-            Choose Your Plan <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">({annual ? 'Annual' : 'Monthly'})</span>
+            Choose Your Plan
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Start free. Unlock individual matches only when you need full details—or upgrade for unlimited access & deeper intelligence.
+            Start free with basic access or get verified for unlimited features and exclusive network access.
           </p>
-          <div className="flex items-center justify-center gap-4 pt-4">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <span className={!annual ? 'text-primary' : 'text-muted-foreground'}>Monthly</span>
-              <button
-                onClick={() => setAnnual(a => !a)}
-                className="relative inline-flex h-7 w-14 items-center rounded-full bg-blue-600/10 border border-blue-600/30 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-                aria-label="Toggle annual billing"
-              >
-                <span
-                  className={`inline-block h-5 w-5 rounded-full bg-blue-600 shadow transition-transform duration-300 ${annual ? 'translate-x-8' : 'translate-x-1'}`}
-                />
-              </button>
-              <span className={annual ? 'text-primary' : 'text-muted-foreground'}>Annual</span>
-            </div>
-            {annual && (
-              <Badge variant="secondary" className="bg-green-600/10 text-green-700 border border-green-600/30">
-                Save up to 2 Months
-              </Badge>
-            )}
-          </div>
-          <div className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-            Billing Mode: {billingLabel}
-          </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan, i) => {
-            const price = annual ? plan.annual : plan.monthly
-            const perMonthEquivalent = annual ? (plan.annual > 0 ? Math.round(plan.annual / 12) : 0) : plan.monthly
+            const price = plan.monthly
             return (
               <Card
                 key={plan.name}
@@ -150,11 +103,6 @@ export function PricingSection() {
                     {plan.tierNote || 'Popular'}
                   </Badge>
                 )}
-                {annual && price > 0 && (
-                  <div className="absolute top-4 right-4 text-[10px] font-semibold px-2 py-1 rounded-full bg-green-500/15 text-green-700 border border-green-500/30">
-                    Save {savings(plan)}%
-                  </div>
-                )}
                 <CardContent className="p-8 space-y-6">
                   <div className="space-y-2 text-center">
                     <h3 className="text-2xl font-semibold tracking-tight">{plan.name}</h3>
@@ -162,26 +110,14 @@ export function PricingSection() {
                   </div>
                   <div className="text-center space-y-1">
                     {price > 0 ? (
-                      <>
-                        <div className="flex items-baseline justify-center gap-2">
-                          <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                            {formatLKR(price)}
-                          </span>
-                          <span className="text-sm text-muted-foreground font-medium">{annual ? ' /year' : ' /month'}</span>
-                        </div>
-                        {annual && price > 0 && (
-                          <div className="text-[11px] text-muted-foreground">
-                            ≈ {formatLKR(perMonthEquivalent)} / month effective
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center gap-1">
-                        <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Free</span>
-                        {plan.payPerMatch && (
-                          <span className="text-[11px] font-medium text-muted-foreground">LKR {plan.payPerMatch.toLocaleString()} / match unlock</span>
-                        )}
+                      <div className="flex items-baseline justify-center gap-2">
+                        <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
+                          {formatLKR(price)}
+                        </span>
+                        <span className="text-sm text-muted-foreground font-medium">/month</span>
                       </div>
+                    ) : (
+                      <span className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">Free</span>
                     )}
                   </div>
                   <ul className="space-y-3 text-sm">
@@ -201,12 +137,12 @@ export function PricingSection() {
                     asChild
                   >
                     <Link href="/auth" className="flex items-center justify-center gap-2">
-                      {price === 0 ? 'Create Free Account' : plan.popular ? 'Start Premium' : 'Get Started'}
+                      {price === 0 ? 'Start Free' : 'Get Verified'}
                       <ArrowRight className="h-4 w-4" />
                     </Link>
                   </Button>
                   <div className="text-[11px] text-muted-foreground text-center">
-                    {price === 0 ? 'Pay only for matches you unlock' : '14‑day free trial • Cancel anytime'}
+                    {price === 0 ? 'No credit card required' : 'Access verified network • Cancel anytime'}
                   </div>
                 </CardContent>
               </Card>
@@ -256,51 +192,63 @@ export function PricingSection() {
               </thead>
               <tbody>
                 {[
-                  'Property Requests',
-                  'Per Match Unlock Pricing',
-                  'AI Matching Depth',
-                  'Support SLA',
-                  'Verified Seller Access',
-                  'Analytics & Insights',
-                  'Virtual Tours',
-                  'Relationship Manager',
-                  'API / Bulk Tools',
-                  'Legal Review',
+                  'Dashboard Access',
+                  'Property Listings',
+                  'Buying Requests',
+                  'Number of Matches',
+                  'Matching Pool',
+                  'Profile Verification Badge',
+                  'Match Notifications',
+                  'Analytics / Insights',
+                  'Priority in Matching',
+                  'Support',
+                  'Ad Experience',
+                  'Trust / Exclusivity',
+                  'Cost',
                 ].map(feature => (
                   <tr key={feature} className="border-t border-border/40">
                     <td className="p-3 font-medium text-muted-foreground">{feature}</td>
                     {plans.map(p => {
                       let value: string | JSX.Element = '—'
                       switch (feature) {
-                        case 'Property Requests':
-                          value = p.name === 'Basic' ? 'Preview Only' : (p.name === 'Premium' ? 'Unlimited' : 'Unlimited + Bulk')
+                        case 'Dashboard Access':
+                          value = 'Yes'
                           break
-                        case 'Per Match Unlock Pricing':
-                          value = p.name === 'Basic' ? `LKR ${p.payPerMatch?.toLocaleString()}` : 'Included'
+                        case 'Property Listings':
+                          value = p.name === 'Free' ? '3' : 'Unlimited'
                           break
-                        case 'AI Matching Depth':
-                          value = p.name === 'Basic' ? 'Preview' : (p.name === 'Premium' ? 'Advanced' : 'Advanced + Predictive')
+                        case 'Buying Requests':
+                          value = p.name === 'Free' ? '3' : 'Unlimited'
                           break
-                        case 'Support SLA':
-                          value = p.name === 'Basic' ? 'Email 24h' : (p.name === 'Premium' ? 'Priority 4h' : '24/7 Hotline')
+                        case 'Number of Matches':
+                          value = p.name === 'Free' ? 'Up to 3/month' : 'Unlimited'
                           break
-                        case 'Verified Seller Access':
-                          value = p.name === 'Basic' ? 'Limited' : 'Full'
+                        case 'Matching Pool':
+                          value = p.name === 'Free' ? 'Free + Verified' : 'Verified only'
                           break
-                        case 'Analytics & Insights':
-                          value = p.name === 'Basic' ? 'Basic' : (p.name === 'Premium' ? 'Market Trends' : 'Advanced Suite')
+                        case 'Profile Verification Badge':
+                          value = p.name === 'Free' ? 'No' : 'Yes'
                           break
-                        case 'Virtual Tours':
-                          value = p.name === 'Basic' ? '—' : 'Included'
+                        case 'Match Notifications':
+                          value = p.name === 'Free' ? 'Basic email' : 'Instant push/email'
                           break
-                        case 'Relationship Manager':
-                          value = p.name === 'Premium' ? 'Yes' : (p.name === 'Enterprise' ? 'Dedicated' : '—')
+                        case 'Analytics / Insights':
+                          value = p.name === 'Free' ? 'None' : 'Full insights'
                           break
-                        case 'API / Bulk Tools':
-                          value = p.name === 'Enterprise' ? 'Yes' : '—'
+                        case 'Priority in Matching':
+                          value = p.name === 'Free' ? 'Low' : 'High'
                           break
-                        case 'Legal Review':
-                          value = p.name === 'Enterprise' ? 'Yes' : '—'
+                        case 'Support':
+                          value = p.name === 'Free' ? 'Email only' : 'Priority chat/phone'
+                          break
+                        case 'Ad Experience':
+                          value = p.name === 'Free' ? 'Standard branding' : 'Ad-free'
+                          break
+                        case 'Trust / Exclusivity':
+                          value = p.name === 'Free' ? 'General' : 'Verified-only network'
+                          break
+                        case 'Cost':
+                          value = p.name === 'Free' ? 'Free' : 'LKR 2,000 / month'
                           break
                       }
                       return (
@@ -322,11 +270,11 @@ export function PricingSection() {
         <div className="mt-14 text-center" data-gsap="fade-up" data-gsap-delay="0.2">
           <Button size="lg" asChild className="px-10 py-6 text-base font-medium bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-600/30">
             <Link href="/auth" className="flex items-center gap-2">
-              Start Free Trial <ArrowRight className="h-4 w-4" />
+              Get Started Free <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
           <div className="mt-4 text-xs text-muted-foreground tracking-wide uppercase">
-            No hidden fees • Prices exclusive of local taxes
+            No hidden fees • Upgrade anytime
           </div>
         </div>
       </div>

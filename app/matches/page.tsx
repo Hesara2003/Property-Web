@@ -1,187 +1,204 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import {
-  Home,
-  Bell,
-  User,
-  Settings,
-  LogOut,
-  MapPin,
+import { Skeleton } from "@/components/ui/skeleton"
+import { 
+  Plus, 
+  Search, 
+  MapPin, 
+  Home, 
+  Bell, 
+  User, 
+  Settings, 
+  LogOut, 
+  Eye, 
+  Star, 
+  Calendar, 
+  Filter, 
+  DollarSign, 
+  Bed, 
+  Bath, 
+  Square, 
+  Heart, 
+  Share2,
+  Clock,
+  CheckCircle,
+  XCircle,
   Lock,
-  Star,
-  Search,
-  Bed,
-  Bath,
-  Square,
-  Shield,
-  Crown,
   Unlock,
+  Phone,
+  Mail
 } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
-// Mock data for matches
-const mockMatches = [
+interface PropertyMatch {
+  id: number
+  requestId: number
+  title: string
+  price: number
+  location: string
+  bedrooms: number
+  bathrooms: number
+  area: number
+  image: string
+  seller: string
+  sellerPhone?: string
+  sellerEmail?: string
+  matchScore: number
+  verified: boolean
+  status: "pending_admin" | "admin_approved" | "seller_confirmed" | "available" | "unlocked"
+  features: string[]
+  description: string
+  unlockFee: number
+}
+
+const mockMatches: PropertyMatch[] = [
   {
     id: 1,
     requestId: 1,
-    title: "Luxury 3 BHK in Bandra West",
-    price: 32000000,
-    location: "Bandra West, Mumbai",
-    matchScore: 95,
-    verified: true,
-    locked: false,
-    image: "/luxury-apartment-bandra.jpg",
-    seller: "Premium Properties",
-    features: ["3 BHK", "2400 sq ft", "Sea View", "Parking"],
+    title: "Beautiful 3BR House Colombo 6",
+    price: 95000000,
+    location: "Colombo 6, Sri Lanka",
     bedrooms: 3,
     bathrooms: 2,
-    area: 2400,
-    pricePerSqft: 13333,
-    description: "Stunning sea-facing apartment with premium amenities",
+    area: 2200,
+    image: "/luxury-estate.png",
+    seller: "Prime Properties",
+    sellerPhone: "+94 77 123 4567",
+    sellerEmail: "contact@primeproperties.lk",
+    matchScore: 95,
+    verified: true,
+    status: "available",
+    features: ["Garden", "Parking", "Security", "Modern Kitchen"],
+    description: "Stunning 3-bedroom house in prestigious Colombo 6 area with beautiful garden and modern amenities.",
+    unlockFee: 5000,
   },
   {
     id: 2,
     requestId: 1,
-    title: "Modern 3 BHK Apartment",
-    price: 28000000,
-    location: "Bandra West, Mumbai",
-    matchScore: 88,
-    verified: true,
-    locked: true,
-    image: "/modern-apartment-mumbai.png",
-    seller: "Elite Realty",
-    features: ["3 BHK", "2200 sq ft", "Gym", "Pool"],
+    title: "Luxury Apartment Colombo 6",
+    price: 110000000,
+    location: "Colombo 6, Sri Lanka", 
     bedrooms: 3,
     bathrooms: 2,
-    area: 2200,
-    pricePerSqft: 12727,
-    description: "Contemporary design with world-class amenities",
+    area: 1900,
+    image: "/luxury-apartment-bandra.jpg",
+    seller: "Urban Elite",
+    matchScore: 88,
+    verified: true,
+    status: "seller_confirmed",
+    features: ["City View", "Gym", "Pool", "Parking"],
+    description: "Premium apartment with city views and world-class amenities in the heart of Colombo.",
+    unlockFee: 5000,
   },
   {
     id: 3,
     requestId: 2,
-    title: "Beachfront Villa in North Goa",
-    price: 22000000,
-    location: "Candolim, North Goa",
+    title: "Modern 2BR Apartment Kandy",
+    price: 42000000,
+    location: "Kandy, Sri Lanka",
+    bedrooms: 2,
+    bathrooms: 1,
+    area: 1400,
+    image: "/modern-apartment-mumbai.png",
+    seller: "Hill Country Homes",
     matchScore: 92,
     verified: false,
-    locked: true,
-    image: "/beachfront-villa-goa.jpg",
-    seller: "Coastal Properties",
-    features: ["4 BHK", "3000 sq ft", "Beach Access", "Garden"],
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 3000,
-    pricePerSqft: 7333,
-    description: "Private villa with direct beach access and tropical garden",
-  },
-  {
-    id: 4,
-    requestId: 1,
-    title: "Premium Penthouse",
-    price: 45000000,
-    location: "Bandra West, Mumbai",
-    matchScore: 85,
-    verified: true,
-    locked: true,
-    image: "/premium-penthouse-mumbai.jpg",
-    seller: "Luxury Homes",
-    features: ["4 BHK", "3500 sq ft", "Terrace", "Private Lift"],
-    bedrooms: 4,
-    bathrooms: 3,
-    area: 3500,
-    pricePerSqft: 12857,
-    description: "Exclusive penthouse with panoramic city views",
-  },
-  {
-    id: 5,
-    requestId: 1,
-    title: "Spacious Family Home",
-    price: 26000000,
-    location: "Bandra East, Mumbai",
-    matchScore: 78,
-    verified: false,
-    locked: true,
-    image: "/family-home-mumbai.jpg",
-    seller: "Family Realty",
-    features: ["3 BHK", "2100 sq ft", "Garden", "Security"],
-    bedrooms: 3,
-    bathrooms: 2,
-    area: 2100,
-    pricePerSqft: 12381,
-    description: "Perfect family home with private garden space",
-  },
-  {
-    id: 6,
-    requestId: 2,
-    title: "Luxury Resort Villa",
-    price: 35000000,
-    location: "South Goa",
-    matchScore: 89,
-    verified: true,
-    locked: true,
-    image: "/resort-villa-goa.jpg",
-    seller: "Resort Properties",
-    features: ["5 BHK", "4000 sq ft", "Pool", "Staff Quarters"],
-    bedrooms: 5,
-    bathrooms: 4,
-    area: 4000,
-    pricePerSqft: 8750,
-    description: "Luxury villa with private pool and resort-style amenities",
-  },
+    status: "pending_admin",
+    features: ["Mountain View", "Modern", "Elevator"],
+    description: "Contemporary 2-bedroom apartment with stunning mountain views in scenic Kandy.",
+    unlockFee: 5000,
+  }
 ]
 
 export default function MatchesPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [sortBy, setSortBy] = useState("match-score")
+  const [matches, setMatches] = useState<PropertyMatch[]>([])
+  const [sortBy, setSortBy] = useState("matchScore")
   const [filterBy, setFilterBy] = useState("all")
-  const [isUnlockModalOpen, setIsUnlockModalOpen] = useState(false)
-  const [selectedMatch, setSelectedMatch] = useState<(typeof mockMatches)[0] | null>(null)
+  const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams()
+  const requestId = searchParams?.get("request")
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+  useEffect(() => {
+    // Simulate loading
+    setTimeout(() => {
+      let filteredMatches = mockMatches
+      if (requestId) {
+        filteredMatches = mockMatches.filter(match => match.requestId.toString() === requestId)
+      }
+      setMatches(filteredMatches)
+      setLoading(false)
+    }, 1000)
+  }, [requestId])
+
+  const formatPrice = (price: number) => 
+    new Intl.NumberFormat("en-LK", { 
+      style: "currency", 
+      currency: "LKR", 
+      maximumFractionDigits: 0 
     }).format(price)
+
+  const handleUnlock = async (matchId: number) => {
+    // Simulate payment processing
+    setMatches(prev => 
+      prev.map(match => 
+        match.id === matchId 
+          ? { ...match, status: "unlocked" as const }
+          : match
+      )
+    )
   }
 
-  const formatPricePerSqft = (price: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price)
+  const getStatusBadge = (status: PropertyMatch["status"]) => {
+    switch (status) {
+      case "pending_admin":
+        return <Badge variant="secondary" className="flex items-center gap-1"><Clock className="h-3 w-3" />Pending Review</Badge>
+      case "admin_approved":
+        return <Badge className="bg-blue-600 text-white flex items-center gap-1"><Clock className="h-3 w-3" />Awaiting Seller</Badge>
+      case "seller_confirmed":
+        return <Badge className="bg-green-600 text-white flex items-center gap-1"><CheckCircle className="h-3 w-3" />Available</Badge>
+      case "available":
+        return <Badge className="bg-green-600 text-white flex items-center gap-1"><CheckCircle className="h-3 w-3" />Available</Badge>
+      case "unlocked":
+        return <Badge className="bg-purple-600 text-white flex items-center gap-1"><Unlock className="h-3 w-3" />Unlocked</Badge>
+      default:
+        return <Badge variant="secondary">Unknown</Badge>
+    }
   }
 
-  const filteredMatches = mockMatches
-    .filter((match) => {
-      if (filterBy === "verified") return match.verified
-      if (filterBy === "unlocked") return !match.locked
-      if (filterBy === "locked") return match.locked
-      return true
-    })
-    .filter((match) => match.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === "match-score") return b.matchScore - a.matchScore
-      if (sortBy === "price-low") return a.price - b.price
-      if (sortBy === "price-high") return b.price - a.price
-      return 0
-    })
-
-  const handleUnlock = (match: (typeof mockMatches)[0]) => {
-    setSelectedMatch(match)
-    setIsUnlockModalOpen(true)
+  const isLocked = (match: PropertyMatch) => {
+    return !["unlocked"].includes(match.status)
   }
+
+  const canUnlock = (match: PropertyMatch) => {
+    return ["available", "seller_confirmed"].includes(match.status)
+  }
+
+  const filteredMatches = matches.filter(match => {
+    switch (filterBy) {
+      case "verified": return match.verified
+      case "available": return ["available", "seller_confirmed"].includes(match.status)
+      case "unlocked": return match.status === "unlocked"
+      case "pending": return ["pending_admin", "admin_approved"].includes(match.status)
+      default: return true
+    }
+  })
+
+  const sortedMatches = [...filteredMatches].sort((a, b) => {
+    switch (sortBy) {
+      case "price": return a.price - b.price
+      case "priceDesc": return b.price - a.price
+      case "matchScore": return b.matchScore - a.matchScore
+      default: return 0
+    }
+  })
 
   return (
     <div className="min-h-screen bg-background">
@@ -191,10 +208,10 @@ export default function MatchesPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Home className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-foreground">PropertyHub</span>
+              <span className="text-2xl font-bold text-foreground">Property Scout</span>
             </div>
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard/buyer" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/dashboard" className="text-muted-foreground hover:text-foreground transition-colors">
                 Dashboard
               </Link>
               <Link href="/matches" className="text-primary font-medium">
@@ -227,206 +244,272 @@ export default function MatchesPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Property Matches</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            {requestId ? "Matches for Your Request" : "All Property Matches"}
+          </h1>
           <p className="text-muted-foreground">
-            Discover properties that match your requirements. Unlock verified matches to view seller details.
+            Properties matched to your requirements. Pay to unlock full details and seller contact information.
           </p>
         </div>
 
-        {/* Filters and Search */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search properties..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        {/* Filters and Sort */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex items-center gap-2">
+            <Filter className="h-5 w-5 text-muted-foreground" />
+            <Select value={filterBy} onValueChange={setFilterBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Matches</SelectItem>
+                <SelectItem value="available">Available to Unlock</SelectItem>
+                <SelectItem value="unlocked">Unlocked</SelectItem>
+                <SelectItem value="pending">Pending Approval</SelectItem>
+                <SelectItem value="verified">Verified Only</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="match-score">Best Match</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filterBy} onValueChange={setFilterBy}>
-            <SelectTrigger className="w-full md:w-48">
-              <SelectValue placeholder="Filter by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Matches</SelectItem>
-              <SelectItem value="verified">Verified Only</SelectItem>
-              <SelectItem value="unlocked">Unlocked</SelectItem>
-              <SelectItem value="locked">Locked</SelectItem>
-            </SelectContent>
-          </Select>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="matchScore">Match Score</SelectItem>
+                <SelectItem value="price">Price (Low to High)</SelectItem>
+                <SelectItem value="priceDesc">Price (High to Low)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex-1" />
+
+          <div className="flex items-center gap-2">
+            <Input 
+              placeholder="Search matches..." 
+              className="max-w-sm"
+            />
+            <Button variant="outline" size="icon">
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-muted-foreground">
-            Showing {filteredMatches.length} of {mockMatches.length} matches
-          </p>
+        {/* Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-foreground">{matches.length}</div>
+              <div className="text-sm text-muted-foreground">Total Matches</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {matches.filter(m => ["available", "seller_confirmed"].includes(m.status)).length}
+              </div>
+              <div className="text-sm text-muted-foreground">Available</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-purple-600">
+                {matches.filter(m => m.status === "unlocked").length}
+              </div>
+              <div className="text-sm text-muted-foreground">Unlocked</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <div className="text-2xl font-bold text-orange-600">
+                {matches.length > 0 ? Math.round(matches.reduce((acc, m) => acc + m.matchScore, 0) / matches.length) : 0}%
+              </div>
+              <div className="text-sm text-muted-foreground">Avg Match</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Matches Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMatches.map((match) => (
-            <Card key={match.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
-              <div className="aspect-[4/3] relative">
-                <img src={match.image || "/placeholder.svg"} alt={match.title} className="w-full h-full object-cover" />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <Badge className="bg-primary text-primary-foreground">{match.matchScore}% Match</Badge>
-                  {match.verified && (
-                    <Badge className="bg-green-600 text-white">
-                      <Shield className="h-3 w-3 mr-1" />
-                      Verified
-                    </Badge>
-                  )}
+        {loading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <div className="aspect-video">
+                  <Skeleton className="w-full h-full" />
                 </div>
-                {match.locked && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <Lock className="h-8 w-8 mx-auto mb-2" />
-                      <div className="text-sm font-medium">Locked Match</div>
-                      <div className="text-xs opacity-80">Unlock to view details</div>
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sortedMatches.map((match) => {
+              const locked = isLocked(match)
+              const canUnlockMatch = canUnlock(match)
+              
+              return (
+                <Card key={match.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    <div className="aspect-video overflow-hidden">
+                      <img 
+                        src={match.image} 
+                        alt={match.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                  </div>
-                )}
-              </div>
-              <CardContent className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold text-lg text-balance">{match.title}</h3>
-                    <div className="flex items-center gap-1 text-muted-foreground text-sm mt-1">
-                      <MapPin className="h-4 w-4" />
-                      {match.location}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-primary">{formatPrice(match.price)}</div>
-                    <div className="text-sm text-muted-foreground">{formatPricePerSqft(match.pricePerSqft)}/sq ft</div>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Bed className="h-4 w-4" />
-                      {match.bedrooms} BHK
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Bath className="h-4 w-4" />
-                      {match.bathrooms} Bath
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Square className="h-4 w-4" />
-                      {match.area} sq ft
-                    </div>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground text-pretty">{match.description}</p>
-
-                  <div className="flex flex-wrap gap-1">
-                    {match.features.slice(0, 3).map((feature, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {feature}
+                    <div className="absolute top-3 left-3 flex flex-col gap-2">
+                      <Badge 
+                        variant="secondary" 
+                        className={`text-white ${match.matchScore >= 90 ? 'bg-green-600' : match.matchScore >= 80 ? 'bg-blue-600' : 'bg-orange-600'}`}
+                      >
+                        {match.matchScore}% Match
                       </Badge>
-                    ))}
-                    {match.features.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{match.features.length - 3} more
-                      </Badge>
+                      {match.verified && (
+                        <Badge className="bg-blue-600 text-white">Verified</Badge>
+                      )}
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      {getStatusBadge(match.status)}
+                    </div>
+                    <div className="absolute bottom-3 right-3 flex gap-2">
+                      <Button variant="ghost" size="icon" className="bg-white/80 hover:bg-white">
+                        <Heart className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="bg-white/80 hover:bg-white">
+                        <Share2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {locked && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <div className="text-white text-center">
+                          <Lock className="h-8 w-8 mx-auto mb-2" />
+                          <p className="text-sm font-medium">
+                            {["pending_admin", "admin_approved"].includes(match.status) 
+                              ? "Awaiting Approval" 
+                              : "Locked"
+                            }
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
 
-                  <div className="flex gap-2">
-                    {match.locked ? (
-                      <Button className="flex-1" onClick={() => handleUnlock(match)}>
-                        <Unlock className="h-4 w-4 mr-2" />
-                        Unlock Now
+                  <CardContent className="p-4 space-y-3">
+                    <div>
+                      <h3 className="font-semibold text-lg line-clamp-1">{match.title}</h3>
+                      <div className="flex items-center gap-1 text-muted-foreground text-sm">
+                        <MapPin className="h-3 w-3" />
+                        {match.location}
+                      </div>
+                      <div className="text-sm text-muted-foreground">by {match.seller}</div>
+                    </div>
+
+                    <div className="text-2xl font-bold text-primary">
+                      {locked ? "LKR ••••••••" : formatPrice(match.price)}
+                    </div>
+
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Bed className="h-4 w-4" />
+                        {match.bedrooms} BR
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Bath className="h-4 w-4" />
+                        {match.bathrooms} Bath
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Square className="h-4 w-4" />
+                        {locked ? "••••" : match.area} sq ft
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {locked ? "Unlock to view full description and contact details" : match.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1">
+                      {(locked ? match.features.slice(0, 2) : match.features).map((feature, idx) => (
+                        <span key={idx} className="text-xs bg-muted px-2 py-1 rounded">
+                          {feature}
+                        </span>
+                      ))}
+                      {locked && match.features.length > 2 && (
+                        <span className="text-xs bg-muted px-2 py-1 rounded">+{match.features.length - 2} more</span>
+                      )}
+                    </div>
+
+                    {match.status === "unlocked" ? (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Phone className="h-4 w-4" />
+                          <span>{match.sellerPhone}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm">
+                          <Mail className="h-4 w-4" />
+                          <span>{match.sellerEmail}</span>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button className="flex-1 gap-2">
+                            <Phone className="h-4 w-4" />
+                            Call Now
+                          </Button>
+                          <Button variant="outline" className="gap-2">
+                            <Mail className="h-4 w-4" />
+                            Email
+                          </Button>
+                        </div>
+                      </div>
+                    ) : canUnlockMatch ? (
+                      <Button 
+                        className="w-full gap-2" 
+                        onClick={() => handleUnlock(match.id)}
+                      >
+                        <Unlock className="h-4 w-4" />
+                        Unlock for {formatPrice(match.unlockFee)}
                       </Button>
                     ) : (
-                      <Button className="flex-1 bg-transparent" variant="outline" asChild>
-                        <Link href={`/matches/${match.id}`}>View Details</Link>
+                      <Button 
+                        className="w-full" 
+                        disabled
+                        variant="secondary"
+                      >
+                        {match.status === "pending_admin" && "Pending Admin Approval"}
+                        {match.status === "admin_approved" && "Awaiting Seller Confirmation"}
                       </Button>
                     )}
-                    <Button variant="outline" size="icon">
-                      <Star className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
 
-        {/* Unlock Modal */}
-        <Dialog open={isUnlockModalOpen} onOpenChange={setIsUnlockModalOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Unlock className="h-5 w-5" />
-                Unlock Property Match
-              </DialogTitle>
-              <DialogDescription>
-                Choose how you'd like to unlock this verified property match to view seller contact details.
-              </DialogDescription>
-            </DialogHeader>
-            {selectedMatch && (
-              <div className="space-y-6">
-                <div className="p-4 bg-muted rounded-lg">
-                  <h4 className="font-semibold">{selectedMatch.title}</h4>
-                  <p className="text-sm text-muted-foreground">{selectedMatch.location}</p>
-                  <p className="text-lg font-bold text-primary mt-2">{formatPrice(selectedMatch.price)}</p>
-                </div>
-
-                <div className="space-y-4">
-                  <Card className="p-4 border-2 border-primary">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Crown className="h-5 w-5 text-primary" />
-                        <span className="font-semibold">Premium Plan</span>
-                      </div>
-                      <Badge>Recommended</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Unlimited unlocks + priority matching + featured requests
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold">₹999/month</span>
-                      <Button className="w-32">Upgrade</Button>
-                    </div>
-                  </Card>
-
-                  <Card className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Unlock className="h-5 w-5 text-muted-foreground" />
-                      <span className="font-semibold">One-time Unlock</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-4">Unlock this single property match only</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold">₹199</span>
-                      <Button variant="outline" className="w-32 bg-transparent" asChild>
-                        <Link href={`/matches/${selectedMatch.id}?unlocked=true`}>Unlock</Link>
-                      </Button>
-                    </div>
-                  </Card>
-                </div>
-
-                <div className="text-center">
-                  <Button variant="link" onClick={() => setIsUnlockModalOpen(false)}>
-                    Cancel
-                  </Button>
-                </div>
+        {sortedMatches.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <div className="max-w-md mx-auto space-y-4">
+              <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto">
+                <Search className="h-8 w-8 text-muted-foreground" />
               </div>
-            )}
-          </DialogContent>
-        </Dialog>
+              <h3 className="text-xl font-semibold">No matches found</h3>
+              <p className="text-muted-foreground">
+                {requestId 
+                  ? "No matches found for this specific request. Try creating a new request with different criteria."
+                  : "Try adjusting your filters or create a new property request to find more matches."
+                }
+              </p>
+              <Button asChild>
+                <Link href="/dashboard">Create New Request</Link>
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
