@@ -3,7 +3,7 @@ import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Search, Users, Home, ArrowRight, Sparkles } from "lucide-react"
+import { Search, Users, Home, ArrowRight, Sparkles, FileText, UserCheck, Clock, CheckCircle2 } from "lucide-react"
 import { SplitTextReveal } from "@/components/split-text-reveal"
 
 interface Step {
@@ -19,45 +19,45 @@ interface Step {
 const steps: Step[] = [
   {
     id: 1,
-    title: 'Submit Requirements',
+    title: 'List & Request',
     icon: Search,
-    headline: 'Structured Requirement Capture',
-    description: 'Tell us exactly what you want – city, budget range (LKR), property type, title status preferences and lifestyle factors. Our intake form is tuned for Sri Lankan market nuances.',
+    headline: 'Sellers List, Buyers Submit Requests',
+    description: 'Property sellers list their properties with complete details and photos. Buyers submit specific property requests with their requirements, budget, and preferred locations.',
     bullets: [
-      'Location zoning & region filters',
-      'Budget + valuation confidence',
-      'Property type & usage intent',
-      'Legal/title readiness flags',
+      'Sellers: Upload property listings with photos',
+      'Buyers: Submit detailed property requirements', 
+      'Location, budget & property type specifications',
+      'Comprehensive property database building',
     ],
-    cta: 'Start Now',
+    cta: 'Get Started',
   },
   {
     id: 2,
-    title: 'Smart Matching',
+    title: 'System Matching & Availability Check',
     icon: Users,
-    headline: 'AI Confidence & Verification Layer',
-    description: 'We weight suitability using multi-factor scoring: location desirability, title indicators, amenity alignment, price fairness signals and supply velocity.',
+    headline: 'Automated Matching with Seller Verification',
+    description: 'Our system automatically matches buyer requests with listed properties. We then contact sellers to verify current availability and gather additional property details.',
     bullets: [
-      'Relevance & compliance scoring',
-      'Anomaly & risk pattern checks',
-      'Seller credibility weighting',
-      'Early document surface view',
+      'AI-powered property-request matching',
+      'Direct seller availability confirmation',
+      'Real-time property status updates',
+      'Initial compatibility assessment',
     ],
-    cta: 'View Sample Match',
+    cta: 'See Matching',
   },
   {
     id: 3,
-    title: 'Secure Transaction',
+    title: 'Manual Verification & Delivery',
     icon: Home,
-    headline: 'Guided Decision & Closure',
-    description: 'Access verified seller channels, documentation readiness snapshots and contextual negotiation guardrails to close with confidence.',
+    headline: 'Admin Verification & 24-Hour Delivery',
+    description: 'Our admin team manually verifies all property details by contacting sellers directly, then delivers verified matches to buyers within 24 hours with complete seller information.',
     bullets: [
-      'Document readiness matrix',
-      'Negotiation context signals',
-      'Valuation benchmark overlays',
-      'Progress tracking & alerts',
+      'Manual verification by admin team',
+      'Direct seller contact for confirmation',
+      'Quality-assured property information',
+      '24-hour guaranteed delivery to buyers',
     ],
-    cta: 'See Due Diligence',
+    cta: 'Start Matching',
   },
 ]
 
@@ -78,7 +78,7 @@ export function HowItWorksSection() {
             className="text-4xl md:text-5xl font-light tracking-tight text-balance"
           />
           <p className="text-muted-foreground text-lg leading-relaxed">
-            A high-signal, low-friction path from clarity to closing – engineered for modern buyers in the Sri Lankan market.
+            A comprehensive platform connecting property sellers and buyers through intelligent matching, verification, and delivery within 24 hours.
           </p>
         </div>
 

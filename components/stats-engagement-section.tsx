@@ -12,12 +12,12 @@ interface StatMeta {
 }
 
 const STATS: StatMeta[] = [
-  { label: "Listings Islandwide", value: "8200+", icon: Building2, short: "Active quality listings" },
-  { label: "Successful Matches", value: "92%", icon: Shield, short: "Qualified match rate" },
-  { label: "Avg Response (hrs)", value: "12", icon: Clock, short: "Median first reply" },
-  { label: "Verified Buyers", value: "5000+", icon: Users, short: "Serious active demand" },
-  { label: "Match Acceleration (×)", value: "3.4", icon: TrendingUp, short: "Faster shortlist speed" },
-  { label: "Engagement Retention (%)", value: "87", icon: LineChart, short: "Mid‑funnel continuity" },
+  { label: "Listed Properties", value: "8200+", icon: Building2, short: "Sellers trust us with their homes" },
+  { label: "Match Success Rate", value: "92%", icon: Shield, short: "Buyers get matched to available properties" },
+  { label: "Response Time", value: "24", icon: Clock, short: "Hours to show you matches" },
+  { label: "Active Requests", value: "5000+", icon: Users, short: "Buyers searching right now" },
+  { label: "Verified Properties", value: "100%", icon: TrendingUp, short: "On paid plans - no fake listings" },
+  { label: "Seller Response Rate", value: "87%", icon: LineChart, short: "Properties confirmed available" },
 ]
 
 function useCountUp(target: number, play: boolean, duration = 1600) {
@@ -59,9 +59,9 @@ export function StatsEngagementSection() {
       </div>
       <div className="container mx-auto px-6 relative">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-6">
-          <Badge variant="secondary" className="px-4 py-1 text-[11px] tracking-wider">Key Platform Stats</Badge>
-          <h2 className="text-3xl md:text-4xl font-light tracking-tight">Snapshot Performance Metrics</h2>
-          <p className="text-muted-foreground text-base">Fast overview of core marketplace signals.</p>
+          <Badge variant="secondary" className="px-4 py-1 text-[11px] tracking-wider">Smart Matching System</Badge>
+          <h2 className="text-3xl md:text-4xl font-light tracking-tight">We Connect Buyers to Real Sellers</h2>
+          <p className="text-muted-foreground text-base">Tell us what you want. We find sellers who have it. Simple.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {STATS.map((s, i) => {
