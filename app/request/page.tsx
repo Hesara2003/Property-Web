@@ -38,90 +38,77 @@ import {
 import Link from "next/link"
 
 // Types
-type PropertyType = "HOUSE" | "APARTMENT" | "LAND" | "COMMERCIAL"
-type Purpose = "BUY" | "RENT"
-type Province = "Western" | "Central" | "Southern" | "Northern" | "Eastern" | "North Western" | "North Central" | "Uva" | "Sabaragamuwa"
+type PropertyCategory = "HOUSE" | "COMMERCIAL" | "LAND"
+type PropertyType = "DETACHED" | "APARTMENT" | "VILLA" | "TOWNHOUSE" | "SHOP" | "OFFICE" | "WAREHOUSE" | "FACTORY" | "HOTEL" | "OTHER" | "RESIDENTIAL" | "COMMERCIAL" | "AGRICULTURAL" | "INDUSTRIAL"
+type Purpose = "SALE" | "RENT" | "INVESTMENT"
+type Condition = "BRAND_NEW" | "USED" | "UNDER_CONSTRUCTION"
 
 interface PropertyRequest {
-  // Common
-  locations: string[]
-  budgetMin: number
-  budgetMax: number
-  propertyType: PropertyType
+  // Required fields
+  propertyCategory: PropertyCategory
+  district: string
+  priceMin: number
+  priceMax: number
   purpose: Purpose
   
-  // House specific
+  // Optional fields
+  propertyType?: PropertyType
+  city?: string
+  
+  // Property specific fields
   landSizeMin?: number
   landSizeMax?: number
-  houseSizeMin?: number
-  houseSizeMax?: number
+  floorAreaMin?: number
+  floorAreaMax?: number
+  floorsMin?: number
+  floorsMax?: number
   bedroomsMin?: number
   bedroomsMax?: number
   bathroomsMin?: number
   bathroomsMax?: number
-  floorsMin?: number
-  floorsMax?: number
-  parkingMin?: number
-  parkingMax?: number
-  yearBuiltMin?: number
-  yearBuiltMax?: number
+  condition?: Condition
   
-  // Apartment specific
-  sizeMin?: number
-  sizeMax?: number
-  floorMin?: number
-  floorMax?: number
-  amenities?: string[]
+  // Additional features
+  features?: string[]
   
-  // Land specific
-  frontageMin?: number
-  frontageMax?: number
-  zoningType?: string
-  utilities?: string[]
-  
-  // Commercial specific
-  floorAreaMin?: number
-  floorAreaMax?: number
-  facilities?: string[]
-  
-  // Additional
-  description?: string
-  urgency?: string
+  // Notes
+  notes?: string
 }
 
-const provinces = [
-  "Western", "Central", "Southern", "Northern", "Eastern", 
-  "North Western", "North Central", "Uva", "Sabaragamuwa"
+// All districts in Sri Lanka
+const districts = [
+  "Colombo", "Gampaha", "Kalutara", "Kandy", "Matale", "Nuwara Eliya",
+  "Galle", "Matara", "Hambantota", "Jaffna", "Kilinochchi", "Mannar", 
+  "Vavuniya", "Mullativu", "Trincomalee", "Batticaloa", "Ampara",
+  "Kurunegala", "Puttalam", "Anuradhapura", "Polonnaruwa", 
+  "Badulla", "Monaragala", "Ratnapura", "Kegalle"
 ]
 
-const districts: Record<Province, string[]> = {
-  "Western": ["Colombo", "Gampaha", "Kalutara"],
-  "Central": ["Kandy", "Matale", "Nuwara Eliya"],
-  "Southern": ["Galle", "Matara", "Hambantota"],
-  "Northern": ["Jaffna", "Kilinochchi", "Mannar", "Vavuniya", "Mullativu"],
-  "Eastern": ["Trincomalee", "Batticaloa", "Ampara"],
-  "North Western": ["Kurunegala", "Puttalam"],
-  "North Central": ["Anuradhapura", "Polonnaruwa"],
-  "Uva": ["Badulla", "Monaragala"],
-  "Sabaragamuwa": ["Ratnapura", "Kegalle"]
+// Property type options based on category
+const propertyTypesByCategory: Record<PropertyCategory, PropertyType[]> = {
+  "HOUSE": ["DETACHED", "APARTMENT", "VILLA", "TOWNHOUSE"],
+  "COMMERCIAL": ["SHOP", "OFFICE", "WAREHOUSE", "FACTORY", "HOTEL", "OTHER"],
+  "LAND": ["RESIDENTIAL", "COMMERCIAL", "AGRICULTURAL", "INDUSTRIAL"]
 }
 
-const amenitiesOptions = ["Lift", "Gym", "Swimming Pool", "Security", "Garden", "Playground", "Parking", "Generator"]
-const utilitiesOptions = ["Water", "Electricity", "Gas", "Internet", "Sewerage"]
-const facilitiesOptions = ["Loading Bays", "Lifts", "Security", "Reception", "Conference Rooms", "Parking", "Generator"]
-const zoningTypes = ["Residential", "Commercial", "Agricultural", "Industrial", "Mixed Use"]
+// Features by property category
+const featuresByCategory = {
+  "HOUSE": ["Garden", "Balcony", "Swimming Pool", "Parking", "Security", "Air Conditioning", "Solar Power", "Gated Community", "Renovated Kitchen/Bathroom"],
+  "COMMERCIAL": ["Parking", "Loading Bay", "Elevator/Lift", "Security", "Air Conditioning", "Electricity (Three Phase)", "CCTV", "Fire Safety", "Warehouse Storage", "Reception Area"],
+  "LAND": ["Electricity Access", "Water Access", "Road Frontage", "Fencing/Security", "Irrigation Access", "Suitable for Construction", "Suitable for Farming", "Scenic View", "Corner Plot"]
+}
 
 export default function PropertyRequestPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<PropertyRequest>({
-    locations: [],
-    budgetMin: 0,
-    budgetMax: 0,
-    propertyType: "HOUSE",
-    purpose: "BUY"
+    propertyCategory: "HOUSE",
+    district: "",
+    priceMin: 0,
+    priceMax: 0,
+    purpose: "SALE"
   })
 
-  const totalSteps = 5
+  const totalSteps = 4
 
   const updateFormData = (updates: Partial<PropertyRequest>) => {
     setFormData(prev => ({ ...prev, ...updates }))
@@ -299,66 +286,87 @@ export default function PropertyRequestPage() {
 
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <Label className="text-lg font-medium">What are you looking to do?</Label>
+                  <Label className="text-lg font-medium">Purpose</Label>
                   <RadioGroup
                     value={formData.purpose}
                     onValueChange={(value: Purpose) => updateFormData({ purpose: value })}
-                    className="grid grid-cols-2 gap-4"
+                    className="grid grid-cols-3 gap-4"
                   >
-                    <Label htmlFor="buy" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'BUY' ? 'border-primary bg-primary/5' : ''}`}>
-                      <RadioGroupItem value="BUY" id="buy" />
+                    <Label htmlFor="sale" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'SALE' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="SALE" id="sale" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
-                        Buy Property
+                        Sale
                       </div>
                     </Label>
                     <Label htmlFor="rent" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'RENT' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="RENT" id="rent" />
                       <div className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
-                        Rent Property
+                        Rent
+                      </div>
+                    </Label>
+                    <Label htmlFor="investment" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'INVESTMENT' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="INVESTMENT" id="investment" />
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-5 w-5" />
+                        Investment
                       </div>
                     </Label>
                   </RadioGroup>
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-lg font-medium">What type of property?</Label>
+                  <Label className="text-lg font-medium">Property Category</Label>
                   <RadioGroup
-                    value={formData.propertyType}
-                    onValueChange={(value: PropertyType) => updateFormData({ propertyType: value })}
-                    className="grid grid-cols-2 gap-4"
+                    value={formData.propertyCategory}
+                    onValueChange={(value: PropertyCategory) => updateFormData({ propertyCategory: value, propertyType: undefined })}
+                    className="grid grid-cols-3 gap-4"
                   >
-                    <Label htmlFor="house" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyType === 'HOUSE' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="house" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'HOUSE' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="HOUSE" id="house" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
                         House
                       </div>
                     </Label>
-                    <Label htmlFor="apartment" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyType === 'APARTMENT' ? 'border-primary bg-primary/5' : ''}`}>
-                      <RadioGroupItem value="APARTMENT" id="apartment" />
+                    <Label htmlFor="commercial" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'COMMERCIAL' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="COMMERCIAL" id="commercial" />
                       <div className="flex items-center gap-2">
-                        <Building2 className="h-5 w-5" />
-                        Apartment
+                        <Store className="h-5 w-5" />
+                        Commercial Property
                       </div>
                     </Label>
-                    <Label htmlFor="land" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyType === 'LAND' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="land" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'LAND' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="LAND" id="land" />
                       <div className="flex items-center gap-2">
                         <TreePine className="h-5 w-5" />
                         Land
                       </div>
                     </Label>
-                    <Label htmlFor="commercial" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyType === 'COMMERCIAL' ? 'border-primary bg-primary/5' : ''}`}>
-                      <RadioGroupItem value="COMMERCIAL" id="commercial" />
-                      <div className="flex items-center gap-2">
-                        <Store className="h-5 w-5" />
-                        Commercial
-                      </div>
-                    </Label>
                   </RadioGroup>
                 </div>
+
+                {formData.propertyCategory && (
+                  <div className="space-y-4">
+                    <Label className="text-lg font-medium">Property Type (Optional)</Label>
+                    <Select 
+                      value={formData.propertyType || ""} 
+                      onValueChange={(value: PropertyType) => updateFormData({ propertyType: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Property Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {propertyTypesByCategory[formData.propertyCategory].map(type => (
+                          <SelectItem key={type} value={type}>
+                            {type.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end mt-8">
@@ -371,118 +379,75 @@ export default function PropertyRequestPage() {
           </Card>
         )}
 
-        {/* Step 2: Location */}
+        {/* Step 2: Location & Price */}
         {currentStep === 2 && (
           <Card>
             <CardContent className="p-8">
               <StepHeader
                 step={2}
-                title="Location Preferences"
-                description="Where would you like to find your property?"
+                title="Location & Price Range"
+                description="Tell us where you're looking and your budget"
               />
 
               <div className="space-y-6">
-                <div className="space-y-4">
-                  <Label className="text-lg font-medium flex items-center gap-2">
-                    <MapPin className="h-5 w-5" />
-                    Preferred Locations
-                  </Label>
-                  <p className="text-sm text-muted-foreground">
-                    Select multiple provinces and districts for broader search options
-                  </p>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {provinces.map(province => (
-                      <div key={province} className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id={province}
-                            checked={formData.locations.includes(province)}
-                            onCheckedChange={(checked) => {
-                              if (checked) {
-                                // Add province and all its districts
-                                const provinceDistricts = districts[province as Province] || []
-                                const newLocations = [
-                                  ...formData.locations.filter(loc => 
-                                    loc !== province && !provinceDistricts.includes(loc)
-                                  ),
-                                  province,
-                                  ...provinceDistricts
-                                ]
-                                updateFormData({
-                                  locations: newLocations
-                                })
-                              } else {
-                                // Remove province and all its districts
-                                updateFormData({
-                                  locations: formData.locations.filter(loc => 
-                                    loc !== province && !districts[province as Province]?.includes(loc)
-                                  )
-                                })
-                              }
-                            }}
-                          />
-                          <Label htmlFor={province} className="font-medium cursor-pointer">
-                            {province} Province
-                          </Label>
-                        </div>
-                        
-                        {districts[province as Province] && (
-                          <div className="ml-6 space-y-2">
-                            {districts[province as Province].map(district => (
-                              <div key={district} className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={district}
-                                  checked={formData.locations.includes(district)}
-                                  onCheckedChange={(checked) => {
-                                    if (checked) {
-                                      const newLocations = [...formData.locations, district]
-                                      
-                                      // Check if all districts in this province are now selected
-                                      const provinceDistricts = districts[province as Province] || []
-                                      const allDistrictsSelected = provinceDistricts.every(d => 
-                                        newLocations.includes(d)
-                                      )
-                                      
-                                      // If all districts are selected, also add the province
-                                      if (allDistrictsSelected && !newLocations.includes(province)) {
-                                        newLocations.push(province)
-                                      }
-                                      
-                                      updateFormData({
-                                        locations: newLocations
-                                      })
-                                    } else {
-                                      // Remove district and province (if selected)
-                                      updateFormData({
-                                        locations: formData.locations.filter(loc => 
-                                          loc !== district && loc !== province
-                                        )
-                                      })
-                                    }
-                                  }}
-                                />
-                                <Label htmlFor={district} className="text-sm cursor-pointer">
-                                  {district}
-                                </Label>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <Label className="text-lg font-medium flex items-center gap-2">
+                      <MapPin className="h-5 w-5" />
+                      District *
+                    </Label>
+                    <Select 
+                      value={formData.district} 
+                      onValueChange={(value) => updateFormData({ district: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select District" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {districts.map(district => (
+                          <SelectItem key={district} value={district}>
+                            {district}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  {formData.locations.length > 0 && (
-                    <div className="mt-4">
-                      <Label className="text-sm font-medium">Selected Locations:</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {formData.locations.map(location => (
-                          <Badge key={location} variant="secondary">
-                            {location}
-                          </Badge>
-                        ))}
-                      </div>
+                  <div className="space-y-4">
+                    <Label className="text-lg font-medium">City (Optional)</Label>
+                    <Input
+                      value={formData.city || ""}
+                      onChange={(e) => updateFormData({ city: e.target.value })}
+                      placeholder="e.g., Colombo 7, Dehiwala"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-lg font-medium flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-primary" />
+                    Price Range (LKR) *
+                  </Label>
+                  
+                  <RangeInput
+                    label="Budget Range"
+                    minValue={formData.priceMin}
+                    maxValue={formData.priceMax}
+                    onMinChange={(value) => updateFormData({ priceMin: value })}
+                    onMaxChange={(value) => updateFormData({ priceMax: value })}
+                    unit="LKR"
+                    step={formData.purpose === "SALE" ? 1000000 : 10000}
+                    min={formData.purpose === "SALE" ? 5000000 : 20000}
+                    max={formData.purpose === "SALE" ? 500000000 : 500000}
+                  />
+
+                  {formData.priceMin > 0 && formData.priceMax > 0 && (
+                    <div className="p-4 bg-muted rounded-lg">
+                      <p className="text-sm text-muted-foreground mb-2">Your budget range:</p>
+                      <p className="text-lg font-semibold">
+                        {formatPrice(formData.priceMin)} - {formatPrice(formData.priceMax)}
+                        {formData.purpose === "RENT" && " per month"}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -496,7 +461,7 @@ export default function PropertyRequestPage() {
                 <Button 
                   onClick={nextStep} 
                   className="gap-2"
-                  disabled={formData.locations.length === 0}
+                  disabled={!formData.district || formData.priceMin === 0 || formData.priceMax === 0}
                 >
                   Next
                   <ArrowRight className="h-4 w-4" />
@@ -506,401 +471,170 @@ export default function PropertyRequestPage() {
           </Card>
         )}
 
-        {/* Step 3: Budget */}
+        {/* Step 3: Property Specifications */}
         {currentStep === 3 && (
           <Card>
             <CardContent className="p-8">
               <StepHeader
                 step={3}
-                title="Budget Range"
-                description={`What's your budget for ${formData.purpose === "BUY" ? "buying" : "renting"} this property?`}
-              />
-
-              <div className="space-y-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                  <Label className="text-lg font-medium">
-                    {formData.purpose === "BUY" ? "Purchase" : "Monthly Rent"} Budget (LKR)
-                  </Label>
-                </div>
-
-                <RangeInput
-                  label="Budget Range"
-                  minValue={formData.budgetMin}
-                  maxValue={formData.budgetMax}
-                  onMinChange={(value) => updateFormData({ budgetMin: value })}
-                  onMaxChange={(value) => updateFormData({ budgetMax: value })}
-                  unit="LKR"
-                  step={formData.purpose === "BUY" ? 1000000 : 10000}
-                  min={formData.purpose === "BUY" ? 5000000 : 20000}
-                  max={formData.purpose === "BUY" ? 500000000 : 500000}
-                />
-
-                {formData.budgetMin > 0 && formData.budgetMax > 0 && (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground mb-2">Your budget range:</p>
-                    <p className="text-lg font-semibold">
-                      {formatPrice(formData.budgetMin)} - {formatPrice(formData.budgetMax)}
-                      {formData.purpose === "RENT" && " per month"}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-between mt-8">
-                <Button variant="outline" onClick={prevStep} className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Previous
-                </Button>
-                <Button 
-                  onClick={nextStep} 
-                  className="gap-2"
-                  disabled={formData.budgetMin === 0 || formData.budgetMax === 0}
-                >
-                  Next
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 4: Property Specifications */}
-        {currentStep === 4 && (
-          <Card>
-            <CardContent className="p-8">
-              <StepHeader
-                step={4}
                 title="Property Specifications"
-                description={`Tell us about your ${formData.propertyType.toLowerCase()} requirements`}
+                description={`Tell us about your ${formData.propertyCategory.toLowerCase()} requirements`}
               />
 
               <div className="space-y-8">
-                {/* House Specifications */}
-                {formData.propertyType === "HOUSE" && (
+                {/* Common fields for Houses and Commercial Properties */}
+                {(formData.propertyCategory === "HOUSE" || formData.propertyCategory === "COMMERCIAL") && (
                   <>
+                    {/* Land Size - Optional for Houses/Commercial, Required for Land */}
                     <RangeInput
-                      label="Land Size (Perches)"
+                      label="Land Size (Perch) (Optional)"
                       minValue={formData.landSizeMin || 0}
                       maxValue={formData.landSizeMax || 0}
                       onMinChange={(value) => updateFormData({ landSizeMin: value })}
                       onMaxChange={(value) => updateFormData({ landSizeMax: value })}
-                      unit="perches"
-                      step={5}
-                      min={5}
-                      max={200}
-                    />
-
-                    <RangeInput
-                      label="House Size (sq ft)"
-                      minValue={formData.houseSizeMin || 0}
-                      maxValue={formData.houseSizeMax || 0}
-                      onMinChange={(value) => updateFormData({ houseSizeMin: value })}
-                      onMaxChange={(value) => updateFormData({ houseSizeMax: value })}
-                      unit="sq ft"
-                      step={100}
-                      min={500}
-                      max={10000}
-                    />
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <RangeInput
-                        label="Bedrooms"
-                        minValue={formData.bedroomsMin || 0}
-                        maxValue={formData.bedroomsMax || 0}
-                        onMinChange={(value) => updateFormData({ bedroomsMin: value })}
-                        onMaxChange={(value) => updateFormData({ bedroomsMax: value })}
-                        unit="bedrooms"
-                        step={1}
-                        min={1}
-                        max={8}
-                      />
-
-                      <RangeInput
-                        label="Bathrooms"
-                        minValue={formData.bathroomsMin || 0}
-                        maxValue={formData.bathroomsMax || 0}
-                        onMinChange={(value) => updateFormData({ bathroomsMin: value })}
-                        onMaxChange={(value) => updateFormData({ bathroomsMax: value })}
-                        unit="bathrooms"
-                        step={1}
-                        min={1}
-                        max={6}
-                      />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <RangeInput
-                        label="Number of Floors"
-                        minValue={formData.floorsMin || 0}
-                        maxValue={formData.floorsMax || 0}
-                        onMinChange={(value) => updateFormData({ floorsMin: value })}
-                        onMaxChange={(value) => updateFormData({ floorsMax: value })}
-                        unit="floors"
-                        step={1}
-                        min={1}
-                        max={4}
-                      />
-
-                      <RangeInput
-                        label="Parking Spaces"
-                        minValue={formData.parkingMin || 0}
-                        maxValue={formData.parkingMax || 0}
-                        onMinChange={(value) => updateFormData({ parkingMin: value })}
-                        onMaxChange={(value) => updateFormData({ parkingMax: value })}
-                        unit="spaces"
-                        step={1}
-                        min={0}
-                        max={6}
-                      />
-                    </div>
-
-                    <RangeInput
-                      label="Year Built (Optional)"
-                      minValue={formData.yearBuiltMin || 1980}
-                      maxValue={formData.yearBuiltMax || 2025}
-                      onMinChange={(value) => updateFormData({ yearBuiltMin: value })}
-                      onMaxChange={(value) => updateFormData({ yearBuiltMax: value })}
-                      unit=""
+                      unit="perch"
                       step={1}
-                      min={1980}
-                      max={2025}
-                    />
-                  </>
-                )}
-
-                {/* Apartment Specifications */}
-                {formData.propertyType === "APARTMENT" && (
-                  <>
-                    <RangeInput
-                      label="Apartment Size (sq ft)"
-                      minValue={formData.sizeMin || 0}
-                      maxValue={formData.sizeMax || 0}
-                      onMinChange={(value) => updateFormData({ sizeMin: value })}
-                      onMaxChange={(value) => updateFormData({ sizeMax: value })}
-                      unit="sq ft"
-                      step={100}
-                      min={400}
-                      max={5000}
-                    />
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <RangeInput
-                        label="Bedrooms"
-                        minValue={formData.bedroomsMin || 0}
-                        maxValue={formData.bedroomsMax || 0}
-                        onMinChange={(value) => updateFormData({ bedroomsMin: value })}
-                        onMaxChange={(value) => updateFormData({ bedroomsMax: value })}
-                        unit="bedrooms"
-                        step={1}
-                        min={1}
-                        max={6}
-                      />
-
-                      <RangeInput
-                        label="Bathrooms"
-                        minValue={formData.bathroomsMin || 0}
-                        maxValue={formData.bathroomsMax || 0}
-                        onMinChange={(value) => updateFormData({ bathroomsMin: value })}
-                        onMaxChange={(value) => updateFormData({ bathroomsMax: value })}
-                        unit="bathrooms"
-                        step={1}
-                        min={1}
-                        max={4}
-                      />
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <RangeInput
-                        label="Floor Number"
-                        minValue={formData.floorMin || 0}
-                        maxValue={formData.floorMax || 0}
-                        onMinChange={(value) => updateFormData({ floorMin: value })}
-                        onMaxChange={(value) => updateFormData({ floorMax: value })}
-                        unit="floor"
-                        step={1}
-                        min={0}
-                        max={50}
-                      />
-
-                      <RangeInput
-                        label="Parking Spaces"
-                        minValue={formData.parkingMin || 0}
-                        maxValue={formData.parkingMax || 0}
-                        onMinChange={(value) => updateFormData({ parkingMin: value })}
-                        onMaxChange={(value) => updateFormData({ parkingMax: value })}
-                        unit="spaces"
-                        step={1}
-                        min={0}
-                        max={4}
-                      />
-                    </div>
-
-                    <div className="space-y-4">
-                      <Label className="text-lg font-medium">Preferred Amenities</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {amenitiesOptions.map((amenity) => (
-                          <div key={amenity} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={amenity}
-                              checked={formData.amenities?.includes(amenity) || false}
-                              onCheckedChange={(checked) => {
-                                const current = formData.amenities || []
-                                if (checked) {
-                                  updateFormData({ amenities: [...current, amenity] })
-                                } else {
-                                  updateFormData({ amenities: current.filter(a => a !== amenity) })
-                                }
-                              }}
-                            />
-                            <Label htmlFor={amenity} className="text-sm cursor-pointer">
-                              {amenity}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Land Specifications */}
-                {formData.propertyType === "LAND" && (
-                  <>
-                    <RangeInput
-                      label="Land Size (Perches)"
-                      minValue={formData.landSizeMin || 0}
-                      maxValue={formData.landSizeMax || 0}
-                      onMinChange={(value) => updateFormData({ landSizeMin: value })}
-                      onMaxChange={(value) => updateFormData({ landSizeMax: value })}
-                      unit="perches"
-                      step={5}
-                      min={5}
+                      min={1}
                       max={1000}
                     />
 
+                    {/* Floor Area - Required for Houses and Commercial */}
                     <RangeInput
-                      label="Frontage (feet)"
-                      minValue={formData.frontageMin || 0}
-                      maxValue={formData.frontageMax || 0}
-                      onMinChange={(value) => updateFormData({ frontageMin: value })}
-                      onMaxChange={(value) => updateFormData({ frontageMax: value })}
-                      unit="feet"
-                      step={5}
-                      min={20}
-                      max={200}
-                    />
-
-                    <div className="space-y-4">
-                      <Label className="text-lg font-medium">Zoning Type</Label>
-                      <Select
-                        value={formData.zoningType || ""}
-                        onValueChange={(value) => updateFormData({ zoningType: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select zoning type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {zoningTypes.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-4">
-                      <Label className="text-lg font-medium">Required Utilities</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {utilitiesOptions.map((utility) => (
-                          <div key={utility} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={utility}
-                              checked={formData.utilities?.includes(utility) || false}
-                              onCheckedChange={(checked) => {
-                                const current = formData.utilities || []
-                                if (checked) {
-                                  updateFormData({ utilities: [...current, utility] })
-                                } else {
-                                  updateFormData({ utilities: current.filter(u => u !== utility) })
-                                }
-                              }}
-                            />
-                            <Label htmlFor={utility} className="text-sm cursor-pointer">
-                              {utility}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Commercial Specifications */}
-                {formData.propertyType === "COMMERCIAL" && (
-                  <>
-                    <RangeInput
-                      label="Floor Area (sq ft)"
+                      label="Floor Area / Built-Up Area (sq.ft) *"
                       minValue={formData.floorAreaMin || 0}
                       maxValue={formData.floorAreaMax || 0}
                       onMinChange={(value) => updateFormData({ floorAreaMin: value })}
                       onMaxChange={(value) => updateFormData({ floorAreaMax: value })}
-                      unit="sq ft"
-                      step={500}
-                      min={500}
+                      unit="sq.ft"
+                      step={100}
+                      min={100}
                       max={50000}
                     />
 
+                    {/* Number of Floors - Optional */}
+                    <RangeInput
+                      label="Number of Floors (Optional)"
+                      minValue={formData.floorsMin || 0}
+                      maxValue={formData.floorsMax || 0}
+                      onMinChange={(value) => updateFormData({ floorsMin: value })}
+                      onMaxChange={(value) => updateFormData({ floorsMax: value })}
+                      unit="floors"
+                      step={1}
+                      min={1}
+                      max={10}
+                    />
+                  </>
+                )}
+
+                {/* House specific fields */}
+                {formData.propertyCategory === "HOUSE" && (
+                  <>
                     <div className="grid md:grid-cols-2 gap-6">
                       <RangeInput
-                        label="Floors Available"
-                        minValue={formData.floorsMin || 0}
-                        maxValue={formData.floorsMax || 0}
-                        onMinChange={(value) => updateFormData({ floorsMin: value })}
-                        onMaxChange={(value) => updateFormData({ floorsMax: value })}
-                        unit="floors"
+                        label="Number of Bedrooms (Optional)"
+                        minValue={formData.bedroomsMin || 0}
+                        maxValue={formData.bedroomsMax || 0}
+                        onMinChange={(value) => updateFormData({ bedroomsMin: value })}
+                        onMaxChange={(value) => updateFormData({ bedroomsMax: value })}
+                        unit="bedrooms"
                         step={1}
                         min={1}
-                        max={20}
+                        max={10}
                       />
 
                       <RangeInput
-                        label="Parking Spaces"
-                        minValue={formData.parkingMin || 0}
-                        maxValue={formData.parkingMax || 0}
-                        onMinChange={(value) => updateFormData({ parkingMin: value })}
-                        onMaxChange={(value) => updateFormData({ parkingMax: value })}
-                        unit="spaces"
+                        label="Number of Bathrooms (Optional)"
+                        minValue={formData.bathroomsMin || 0}
+                        maxValue={formData.bathroomsMax || 0}
+                        onMinChange={(value) => updateFormData({ bathroomsMin: value })}
+                        onMaxChange={(value) => updateFormData({ bathroomsMax: value })}
+                        unit="bathrooms"
                         step={1}
-                        min={0}
-                        max={100}
+                        min={1}
+                        max={8}
                       />
                     </div>
 
+                    {/* Condition - Houses and Commercial only */}
                     <div className="space-y-4">
-                      <Label className="text-lg font-medium">Required Facilities</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {facilitiesOptions.map((facility) => (
-                          <div key={facility} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={facility}
-                              checked={formData.facilities?.includes(facility) || false}
-                              onCheckedChange={(checked) => {
-                                const current = formData.facilities || []
-                                if (checked) {
-                                  updateFormData({ facilities: [...current, facility] })
-                                } else {
-                                  updateFormData({ facilities: current.filter(f => f !== facility) })
-                                }
-                              }}
-                            />
-                            <Label htmlFor={facility} className="text-sm cursor-pointer">
-                              {facility}
-                            </Label>
-                          </div>
-                        ))}
-                      </div>
+                      <Label className="text-lg font-medium">Condition (Optional)</Label>
+                      <Select 
+                        value={formData.condition || ""} 
+                        onValueChange={(value: Condition) => updateFormData({ condition: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Condition" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="BRAND_NEW">Brand New</SelectItem>
+                          <SelectItem value="USED">Used</SelectItem>
+                          <SelectItem value="UNDER_CONSTRUCTION">Under Construction</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </>
                 )}
+
+                {/* Commercial specific - same condition field as houses */}
+                {formData.propertyCategory === "COMMERCIAL" && (
+                  <div className="space-y-4">
+                    <Label className="text-lg font-medium">Condition (Optional)</Label>
+                    <Select 
+                      value={formData.condition || ""} 
+                      onValueChange={(value: Condition) => updateFormData({ condition: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Condition" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="BRAND_NEW">Brand New</SelectItem>
+                        <SelectItem value="USED">Used</SelectItem>
+                        <SelectItem value="UNDER_CONSTRUCTION">Under Construction</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Land specific fields */}
+                {formData.propertyCategory === "LAND" && (
+                  <RangeInput
+                    label="Land Size (Perch) *"
+                    minValue={formData.landSizeMin || 0}
+                    maxValue={formData.landSizeMax || 0}
+                    onMinChange={(value) => updateFormData({ landSizeMin: value })}
+                    onMaxChange={(value) => updateFormData({ landSizeMax: value })}
+                    unit="perch"
+                    step={1}
+                    min={1}
+                    max={1000}
+                  />
+                )}
+
+                {/* Additional Features */}
+                <div className="space-y-4">
+                  <Label className="text-lg font-medium">Additional Features (Optional)</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {featuresByCategory[formData.propertyCategory].map((feature) => (
+                      <div key={feature} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={feature}
+                          checked={formData.features?.includes(feature) || false}
+                          onCheckedChange={(checked) => {
+                            const currentFeatures = formData.features || []
+                            if (checked) {
+                              updateFormData({ features: [...currentFeatures, feature] })
+                            } else {
+                              updateFormData({ features: currentFeatures.filter(f => f !== feature) })
+                            }
+                          }}
+                        />
+                        <Label htmlFor={feature} className="text-sm cursor-pointer">
+                          {feature}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between mt-8">
@@ -917,116 +651,73 @@ export default function PropertyRequestPage() {
           </Card>
         )}
 
-        {/* Step 5: Review & Submit */}
-        {currentStep === 5 && (
+        {/* Step 4: Notes & Review */}
+        {currentStep === 4 && (
           <Card>
             <CardContent className="p-8">
               <StepHeader
-                step={5}
-                title="Review & Submit"
-                description="Please review your property request before submitting"
+                step={4}
+                title="Notes & Review"
+                description="Add any special requirements and review your request"
               />
 
               <div className="space-y-6">
-                {/* Summary */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Basic Information</h3>
-                    <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Purpose:</span> {formData.purpose}</p>
-                      <p><span className="font-medium">Property Type:</span> {formData.propertyType}</p>
-                      <p><span className="font-medium">Budget:</span> {formatPrice(formData.budgetMin)} - {formatPrice(formData.budgetMax)}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Locations</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.locations.map(location => (
-                        <Badge key={location} variant="secondary">{location}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Property Specifications Summary */}
+                {/* Notes */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold">Property Specifications</h3>
-                  <div className="grid md:grid-cols-2 gap-4 text-sm">
-                    {formData.propertyType === "HOUSE" && (
-                      <>
-                        {formData.landSizeMin && formData.landSizeMax && (
-                          <p><span className="font-medium">Land Size:</span> {formData.landSizeMin} - {formData.landSizeMax} perches</p>
-                        )}
-                        {formData.houseSizeMin && formData.houseSizeMax && (
-                          <p><span className="font-medium">House Size:</span> {formData.houseSizeMin} - {formData.houseSizeMax} sq ft</p>
-                        )}
-                        {formData.bedroomsMin && formData.bedroomsMax && (
-                          <p><span className="font-medium">Bedrooms:</span> {formData.bedroomsMin} - {formData.bedroomsMax}</p>
-                        )}
-                        {formData.bathroomsMin && formData.bathroomsMax && (
-                          <p><span className="font-medium">Bathrooms:</span> {formData.bathroomsMin} - {formData.bathroomsMax}</p>
-                        )}
-                      </>
-                    )}
-
-                    {formData.propertyType === "APARTMENT" && (
-                      <>
-                        {formData.sizeMin && formData.sizeMax && (
-                          <p><span className="font-medium">Size:</span> {formData.sizeMin} - {formData.sizeMax} sq ft</p>
-                        )}
-                        {formData.bedroomsMin && formData.bedroomsMax && (
-                          <p><span className="font-medium">Bedrooms:</span> {formData.bedroomsMin} - {formData.bedroomsMax}</p>
-                        )}
-                        {formData.floorMin && formData.floorMax && (
-                          <p><span className="font-medium">Floor:</span> {formData.floorMin} - {formData.floorMax}</p>
-                        )}
-                        {formData.amenities && formData.amenities.length > 0 && (
-                          <div className="md:col-span-2">
-                            <span className="font-medium">Amenities:</span>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {formData.amenities.map(amenity => (
-                                <Badge key={amenity} variant="outline" className="text-xs">{amenity}</Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    )}
-
-                    {formData.propertyType === "LAND" && (
-                      <>
-                        {formData.landSizeMin && formData.landSizeMax && (
-                          <p><span className="font-medium">Land Size:</span> {formData.landSizeMin} - {formData.landSizeMax} perches</p>
-                        )}
-                        {formData.frontageMin && formData.frontageMax && (
-                          <p><span className="font-medium">Frontage:</span> {formData.frontageMin} - {formData.frontageMax} feet</p>
-                        )}
-                        {formData.zoningType && (
-                          <p><span className="font-medium">Zoning:</span> {formData.zoningType}</p>
-                        )}
-                      </>
-                    )}
-
-                    {formData.propertyType === "COMMERCIAL" && (
-                      <>
-                        {formData.floorAreaMin && formData.floorAreaMax && (
-                          <p><span className="font-medium">Floor Area:</span> {formData.floorAreaMin} - {formData.floorAreaMax} sq ft</p>
-                        )}
-                        {formData.floorsMin && formData.floorsMax && (
-                          <p><span className="font-medium">Floors:</span> {formData.floorsMin} - {formData.floorsMax}</p>
-                        )}
-                      </>
-                    )}
-                  </div>
+                  <Label className="text-lg font-medium">Notes / Special Requirements (Optional)</Label>
+                  <Textarea
+                    value={formData.notes || ""}
+                    onChange={(e) => updateFormData({ notes: e.target.value })}
+                    placeholder="Any additional preferences, special requirements, or details you'd like to mention..."
+                    rows={4}
+                  />
                 </div>
 
-                {formData.description && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Additional Comments</h3>
-                    <p className="text-sm bg-muted p-3 rounded-lg">{formData.description}</p>
-                  </div>
-                )}
+                {/* Review Summary */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Request Summary</h3>
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <p><strong>Purpose:</strong> {formData.purpose}</p>
+                          <p><strong>Property Category:</strong> {formData.propertyCategory}</p>
+                          {formData.propertyType && (
+                            <p><strong>Property Type:</strong> {formData.propertyType.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</p>
+                          )}
+                          <p><strong>District:</strong> {formData.district}</p>
+                          {formData.city && <p><strong>City:</strong> {formData.city}</p>}
+                        </div>
+                        <div className="space-y-2">
+                          <p><strong>Price Range:</strong> {formatPrice(formData.priceMin)} - {formatPrice(formData.priceMax)}</p>
+                          {formData.landSizeMin && formData.landSizeMax && (
+                            <p><strong>Land Size:</strong> {formData.landSizeMin} - {formData.landSizeMax} perch</p>
+                          )}
+                          {formData.floorAreaMin && formData.floorAreaMax && (
+                            <p><strong>Floor Area:</strong> {formData.floorAreaMin} - {formData.floorAreaMax} sq.ft</p>
+                          )}
+                          {formData.bedroomsMin && formData.bedroomsMax && (
+                            <p><strong>Bedrooms:</strong> {formData.bedroomsMin} - {formData.bedroomsMax}</p>
+                          )}
+                          {formData.condition && (
+                            <p><strong>Condition:</strong> {formData.condition.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {formData.features && formData.features.length > 0 && (
+                        <div className="mt-4">
+                          <p><strong>Features:</strong></p>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {formData.features.map(feature => (
+                              <Badge key={feature} variant="secondary">{feature}</Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
 
                 <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">What happens next?</h4>
@@ -1052,6 +743,8 @@ export default function PropertyRequestPage() {
             </CardContent>
           </Card>
         )}
+
+
       </div>
     </div>
   )

@@ -2,22 +2,22 @@
 import { useEffect, useRef, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Building2, Shield, Clock, Users, TrendingUp, LineChart } from "lucide-react"
+import Image from "next/image"
 
 interface StatMeta {
   label: string
   value: string
-  icon: any
+  icon: string
   short: string
 }
 
 const STATS: StatMeta[] = [
-  { label: "Listed Properties", value: "8200+", icon: Building2, short: "Sellers trust us with their homes" },
-  { label: "Match Success Rate", value: "92%", icon: Shield, short: "Buyers get matched to available properties" },
-  { label: "Response Time", value: "24", icon: Clock, short: "Hours to show you matches" },
-  { label: "Active Requests", value: "5000+", icon: Users, short: "Buyers searching right now" },
-  { label: "Verified Properties", value: "100%", icon: TrendingUp, short: "On paid plans - no fake listings" },
-  { label: "Seller Response Rate", value: "87%", icon: LineChart, short: "Properties confirmed available" },
+  { label: "Listed Properties", value: "8200+", icon: "/stats-icons/property.png", short: "Sellers trust us with their homes" },
+  { label: "Match Success Rate", value: "92%", icon: "/stats-icons/match.png", short: "Buyers get matched to available properties" },
+  { label: "Response Time", value: "24", icon: "/stats-icons/time.png", short: "Hours to show you matches" },
+  { label: "Active Requests", value: "5000+", icon: "/stats-icons/request.png", short: "Buyers searching right now" },
+  { label: "Verified Properties", value: "100%", icon: "/stats-icons/verify.png", short: "On paid plans - no fake listings" },
+  { label: "Seller Response Rate", value: "87%", icon: "/stats-icons/response.png", short: "Properties confirmed available" },
 ]
 
 function useCountUp(target: number, play: boolean, duration = 1600) {
@@ -53,7 +53,7 @@ export function StatsEngagementSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} id="analytics" className="relative py-24" data-gsap="fade-up" data-gsap-stagger="0.08">
+    <section ref={sectionRef} id="analytics" className="relative py-12" data-gsap="fade-up" data-gsap-stagger="0.08">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 right-0 w-[420px] h-[420px] bg-gradient-to-br from-blue-300/20 to-violet-300/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3" />
       </div>
@@ -65,7 +65,6 @@ export function StatsEngagementSection() {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {STATS.map((s, i) => {
-            const Icon = s.icon
             const numeric = parseFloat(s.value.replace(/[^0-9.]/g, "")) || 0
             const suffixMatch = s.value.match(/[^0-9.]+$/)
             const suffix = suffixMatch ? suffixMatch[0] : ""
@@ -78,9 +77,13 @@ export function StatsEngagementSection() {
               >
                 <CardContent className="p-8 flex flex-col gap-5">
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-xl flex items-center justify-center bg-gradient-to-br from-muted to-background text-blue-600 group-hover:from-blue-600 group-hover:to-violet-600 group-hover:text-white transition-colors">
-                      <Icon className="h-7 w-7" />
-                    </div>
+                    <Image 
+                      src={s.icon} 
+                      alt={s.label} 
+                      width={56} 
+                      height={56} 
+                      className="h-14 w-14 object-contain"
+                    />
                     <div>
                       <div className="text-xs uppercase tracking-wide font-medium text-muted-foreground mb-1">{s.label}</div>
                       <div className="text-4xl font-light bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent flex items-baseline gap-1">

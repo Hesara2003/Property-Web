@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Improve font loading performance
+  experimental: {
+    optimizeCss: true,
+  },
 }
 
 export default nextConfig

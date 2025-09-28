@@ -8,75 +8,13 @@ import { SplitTextReveal } from "@/components/split-text-reveal"
 import { PricingSection } from "@/components/pricing-section"
 import { HowItWorksSection } from "@/components/how-it-works"
 import { StatsEngagementSection } from "@/components/stats-engagement-section"
-import { ScrollProgressBar } from "@/components/scroll-progress"
 
 export default function LandingPage() {
   return (
+  <GSAPScrollProvider>
   <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="glass-nav sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 animate-fade-in">
-              <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
-                <Building2 className="h-7 w-7 text-primary-foreground" />
-              </div>
-              <span className="text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Property Scout
-              </span>
-            </div>
-
-            <nav className="hidden md:flex items-center gap-12 text-sm uppercase tracking-wider">
-              <Link
-                href="/about"
-                className="text-muted-foreground hover:text-primary transition-all duration-500 hover:scale-105 font-medium"
-              >
-                About
-              </Link>
-              <Link
-                href="/contact"
-                className="text-muted-foreground hover:text-primary transition-all duration-500 hover:scale-105 font-medium"
-              >
-                Contact
-              </Link>
-              <Link
-                href="/privacy"
-                className="text-muted-foreground hover:text-primary transition-all duration-500 hover:scale-105 font-medium"
-              >
-                Privacy
-              </Link>
-              <Link
-                href="/terms"
-                className="text-muted-foreground hover:text-primary transition-all duration-500 hover:scale-105 font-medium"
-              >
-                Terms
-              </Link>
-            </nav>
-
-            <div className="flex items-center gap-4 animate-slide-in-right">
-              <Button variant="ghost" className="hover:bg-primary/10 text-sm font-medium" asChild>
-                <Link href="/admin">Admin</Link>
-              </Button>
-              <Button
-                className="gradient-primary hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-primary/30 text-sm font-medium px-6"
-                asChild
-              >
-                <Link href="/dashboard" className="flex items-center gap-2">
-                  Dashboard
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-        {/* Progress bar sits at bottom of header */}
-        <div className="absolute left-0 right-0 bottom-0 h-1 overflow-hidden">
-          <ScrollProgressBar />
-        </div>
-      </header>
-
       {/* Hero Section (Fixed Parallax Background) */}
-      <section className="py-24 lg:py-40 relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
+      <section className="py-12 lg:py-40 relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
         <div className="absolute inset-0">
           {/* Fixed background image using CSS parallax (background-attachment: fixed on desktop) */}
           <div
@@ -206,7 +144,7 @@ export default function LandingPage() {
       <PricingSection />
 
       {/* CTA Section */}
-      <section className="py-24 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
+      <section className="py-12 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="container mx-auto px-6 text-center relative">
           <div className="max-w-4xl mx-auto space-y-10 animate-fade-in-up">
@@ -241,77 +179,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-20 border-t border-border/50 glass-card">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12">
-            <div className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 gradient-primary rounded-2xl flex items-center justify-center shadow-lg">
-                  <Building2 className="h-6 w-6 text-primary-foreground" />
-                </div>
-                <span className="text-2xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Property Scout
-                </span>
-              </div>
-              <p className="text-muted-foreground leading-relaxed">
-                Connecting buyers and sellers through intelligent property matching and architectural excellence.
-              </p>
-            </div>
-            <div className="space-y-6">
-              <h4 className="font-semibold text-lg">Quick Links</h4>
-              <div className="space-y-4 text-muted-foreground">
-                <div>
-                  <Link href="/" className="hover:text-primary transition-colors duration-300">
-                    Home
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/about" className="hover:text-primary transition-colors duration-300">
-                    About
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/contact" className="hover:text-primary transition-colors duration-300">
-                    Contact
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <h4 className="font-semibold text-lg">Services</h4>
-              <div className="space-y-4 text-muted-foreground">
-                <div>Property Matching</div>
-                <div>Buyer Services</div>
-                <div>Seller Services</div>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <h4 className="font-semibold text-lg">Support</h4>
-              <div className="space-y-4 text-muted-foreground">
-                <div>
-                  <Link href="/help" className="hover:text-primary transition-colors duration-300">
-                    Help Center
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/privacy" className="hover:text-primary transition-colors duration-300">
-                    Privacy Policy
-                  </Link>
-                </div>
-                <div>
-                  <Link href="/terms" className="hover:text-primary transition-colors duration-300">
-                    Terms of Service
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-border/50 mt-16 pt-10 text-center text-muted-foreground">
-            <p>&copy; 2025 Property Scout. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+
     </div>
+    </GSAPScrollProvider>
   )
 }

@@ -12,9 +12,7 @@ import {
   Search, 
   MapPin, 
   Home, 
-  Bell, 
   User, 
-  Settings, 
   LogOut, 
   Eye, 
   Star, 
@@ -588,14 +586,10 @@ export default function UnifiedDashboard() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-5 w-5" />
+              <Button variant="ghost" size="icon" asChild>
+                <Link href="/profile">
+                  <User className="h-5 w-5" />
+                </Link>
               </Button>
               <Button variant="ghost" size="icon" asChild>
                 <Link href="/">
@@ -618,131 +612,110 @@ export default function UnifiedDashboard() {
           </p>
         </div>
 
-        {/* Stats Cards - Combined View (8 Cards) */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          {/* Property Requests Stats */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Search className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">{mockRequests.length}</div>
-                  <div className="text-sm text-muted-foreground">Active Requests</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
-                  <Home className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">{mockMatches.length}</div>
-                  <div className="text-sm text-muted-foreground">Total Matches</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {mockMatches.filter(m => m.status === "unlocked").length}
+        {/* Stats Cards - Organized by Buying and Selling */}
+        
+        {/* Requests & Matches Section (Buying Side) */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Requests & Matches</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Search className="h-6 w-6 text-primary" />
                   </div>
-                  <div className="text-sm text-muted-foreground">Available Matches</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <Unlock className="h-6 w-6 text-purple-600" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {mockMatches.filter(m => m.status === "unlocked").length}
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{mockRequests.length}</div>
+                    <div className="text-sm text-muted-foreground">Active Requests</div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Unlocked Properties</div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Property Listings Stats */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Home className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">{mockListings.length}</div>
-                  <div className="text-sm text-muted-foreground">Active Listings</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                  <Eye className="h-6 w-6 text-blue-500" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {mockListings.reduce((acc, listing) => acc + listing.views, 0)}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="text-sm text-muted-foreground">Total Views</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                  <Users className="h-6 w-6 text-green-500" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {mockListings.reduce((acc, listing) => acc + listing.inquiries, 0)}
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {mockMatches.filter(m => m.status === "unlocked").length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Available Matches</div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Total Inquiries</div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-orange-500" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-foreground">
-                    {mockListings.reduce((acc, listing) => acc + listing.matches, 0)}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <Unlock className="h-6 w-6 text-purple-600" />
                   </div>
-                  <div className="text-sm text-muted-foreground">Listing Matches</div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {mockMatches.filter(m => m.status === "unlocked").length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Unlocked Properties</div>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Listings & Engagement Section (Selling Side) */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Listings & Engagement</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Home className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">{mockListings.length}</div>
+                    <div className="text-sm text-muted-foreground">Active Listings</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
+                    <Users className="h-6 w-6 text-green-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {mockListings.reduce((acc, listing) => acc + listing.inquiries, 0)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Inquiries</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                    <Eye className="h-6 w-6 text-blue-500" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-foreground">
+                      {mockListings.length > 0 ? Math.round(mockListings.reduce((acc, listing) => acc + listing.views, 0) / mockListings.length) : 0}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Avg Views per Listing</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Main Content */}
