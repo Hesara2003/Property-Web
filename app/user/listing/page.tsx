@@ -140,44 +140,24 @@ export default function PropertyListingPage() {
                 {i + 1 <= currentStep ? <CheckCircle className="h-4 w-4" /> : i + 1}
               </div>
               {i < totalSteps - 1 && (
-                <div className={`w-12 h-0.5 ${i + 1 < currentStep ? "bg-primary" : "bg-muted"}`} />
+                <div className={`w-8 sm:w-12 h-0.5 ${i + 1 < currentStep ? "bg-primary" : "bg-muted"}`} />
               )}
             </div>
           ))}
         </div>
       </div>
-      <h2 className="text-2xl font-bold mb-2">Step {step}: {title}</h2>
-      <p className="text-muted-foreground">{description}</p>
+      <h2 className="text-xl sm:text-2xl font-bold mb-2">Step {step}: {title}</h2>
+      <p className="text-sm sm:text-base text-muted-foreground px-2">{description}</p>
     </div>
   )
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <Home className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">Add Property Listing</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-4xl">
         {/* Step 1: Basic Information */}
         {currentStep === 1 && (
           <Card>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8">
               <StepHeader
                 step={1}
                 title="Basic Information"
@@ -190,23 +170,23 @@ export default function PropertyListingPage() {
                   <RadioGroup
                     value={formData.purpose}
                     onValueChange={(value: Purpose) => updateFormData({ purpose: value })}
-                    className="grid grid-cols-3 gap-4"
+                    className="grid grid-cols-1 sm:grid-cols-3 gap-4"
                   >
-                    <Label htmlFor="sale" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'SALE' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="sale" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'SALE' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="SALE" id="sale" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
                         Sale
                       </div>
                     </Label>
-                    <Label htmlFor="rent" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'RENT' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="rent" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'RENT' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="RENT" id="rent" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
                         Rent
                       </div>
                     </Label>
-                    <Label htmlFor="investment" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'INVESTMENT' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="investment" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.purpose === 'INVESTMENT' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="INVESTMENT" id="investment" />
                       <div className="flex items-center gap-2">
                         <DollarSign className="h-5 w-5" />
@@ -221,23 +201,23 @@ export default function PropertyListingPage() {
                   <RadioGroup
                     value={formData.propertyCategory}
                     onValueChange={(value: PropertyCategory) => updateFormData({ propertyCategory: value })}
-                    className="grid grid-cols-3 gap-4"
+                    className="grid grid-cols-1 sm:grid-cols-3 gap-4"
                   >
-                    <Label htmlFor="house" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'HOUSE' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="house" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'HOUSE' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="HOUSE" id="house" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
                         House
                       </div>
                     </Label>
-                    <Label htmlFor="commercial" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'COMMERCIAL' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="commercial" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'COMMERCIAL' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="COMMERCIAL" id="commercial" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
                         Commercial Property
                       </div>
                     </Label>
-                    <Label htmlFor="land" className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'LAND' ? 'border-primary bg-primary/5' : ''}`}>
+                    <Label htmlFor="land" className={`flex items-center space-x-3 p-3 sm:p-4 border rounded-lg cursor-pointer transition-all hover:bg-muted ${formData.propertyCategory === 'LAND' ? 'border-primary bg-primary/5' : ''}`}>
                       <RadioGroupItem value="LAND" id="land" />
                       <div className="flex items-center gap-2">
                         <Home className="h-5 w-5" />
@@ -280,7 +260,7 @@ export default function PropertyListingPage() {
         {/* Step 2: Location & Price */}
         {currentStep === 2 && (
           <Card>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8">
               <StepHeader
                 step={2}
                 title="Location & Price"
@@ -371,7 +351,7 @@ export default function PropertyListingPage() {
         {/* Step 3: Property Details */}
         {currentStep === 3 && (
           <Card>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8">
               <StepHeader
                 step={3}
                 title="Property Details"
@@ -547,7 +527,7 @@ export default function PropertyListingPage() {
         {/* Step 4: Notes & Review */}
         {currentStep === 4 && (
           <Card>
-            <CardContent className="p-8">
+            <CardContent className="p-4 sm:p-8">
               <StepHeader
                 step={4}
                 title="Notes & Review"

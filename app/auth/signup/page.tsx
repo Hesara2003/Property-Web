@@ -63,8 +63,8 @@ export default function SignUpPage() {
     // Simulate account creation with selected plan
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    // Mock successful authentication - redirect to dashboard
-    router.push("/dashboard")
+    // Mock successful authentication - redirect to user dashboard
+    router.push("/user")
     setIsLoading(false)
   }
 

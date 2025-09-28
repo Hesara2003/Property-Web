@@ -23,8 +23,8 @@ export default function SignInPage() {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    // Mock successful authentication - redirect to buyer dashboard by default
-    router.push("/dashboard")
+    // Mock successful authentication - redirect to user dashboard by default
+    router.push("/user")
     setIsLoading(false)
   }
 

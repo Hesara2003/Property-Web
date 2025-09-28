@@ -54,7 +54,7 @@ export default function LandingPage() {
                 className="text-lg px-12 py-4 bg-blue-600 hover:bg-blue-700 text-white hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-blue-600/30 font-medium"
                 asChild
               >
-                <Link href="/dashboard" className="flex items-center gap-3">
+                <Link href="/user" className="flex items-center gap-3">
                   Start Your Search
                   <ArrowRight className="h-5 w-5" />
                 </Link>
@@ -162,7 +162,7 @@ export default function LandingPage() {
                 className="text-lg px-12 py-4 hover:scale-105 transition-all duration-300 shadow-xl font-medium"
                 asChild
               >
-                <Link href="/dashboard" className="flex items-center gap-3">
+                <Link href="/user" className="flex items-center gap-3">
                   Start Your Search
                   <ArrowRight className="h-5 w-5" />
                 </Link>

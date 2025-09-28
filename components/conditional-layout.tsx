@@ -17,7 +17,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
     '/listing',
     '/request',
     '/admin',
-    '/dashboard',
+    '/user',
     '/profile'
   ]
   

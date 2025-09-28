@@ -43,7 +43,7 @@ export function SharedFooter() {
             <h4 className="font-semibold text-lg">Services</h4>
             <div className="space-y-4 text-muted-foreground">
               <div>
-                <Link href="/dashboard" className="hover:text-primary transition-colors duration-300">
+                <Link href="/user" className="hover:text-primary transition-colors duration-300">
                   Dashboard
                 </Link>
               </div>
