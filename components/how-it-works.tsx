@@ -83,10 +83,10 @@ export function HowItWorksSection() {
         <div className="mx-auto">
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-8 md:left-1/2 md:-ml-0.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-violet-500 to-blue-500"></div>
+            <div className="absolute left-1/2 md:left-1/2 -ml-0.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 via-violet-500 to-blue-500"></div>
             
             {/* Timeline Steps */}
-            <div>
+            <div className="space-y-4 lg:space-y-0">
               {steps.map((step, index) => {
                 const Icon = step.icon
                 const isEven = index % 2 === 0
@@ -100,17 +100,17 @@ export function HowItWorksSection() {
                     data-gsap="fade-up"
                   >
                     {/* Timeline Node */}
-                    <div className="absolute left-8 md:left-1/2 md:-ml-6 z-10 w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg">
+                    <div className="absolute left-1/2 md:left-1/2 -ml-6 z-10 w-12 h-12 rounded-full bg-gradient-to-br from-blue-600 to-violet-600 flex items-center justify-center shadow-lg">
                       <Icon className="h-6 w-6 text-white" />
                     </div>
 
                     {/* Content Card */}
-                    <div className={`w-full md:w-[45.8%] ml-20 md:ml-0 ${isEven ? 'md:mr-auto' : 'md:ml-auto'}`}>
-                      <Card className="relative overflow-hidden border-blue-500/30 bg-white/70 backdrop-blur-xl shadow-xl">
+                    <div className={`w-full md:w-[45.8%] mt-8 md:mt-0 ${isEven ? 'md:mr-auto' : 'md:ml-auto'}`}>
+                      <Card className="relative overflow-hidden border-blue-500/30 bg-white/70 backdrop-blur-xl shadow-xl mx-4 md:mx-0">
                         <div className="absolute inset-0 pointer-events-none">
                           <div className="absolute -top-12 -right-12 w-48 h-48 bg-gradient-to-br from-blue-400/20 to-violet-400/10 blur-3xl" />
                         </div>
-                        <CardContent className="relative p-8 space-y-6">
+                        <CardContent className="relative p-6 md:p-8 space-y-6">
                           <div className="space-y-3">
                             <h3 className="text-xl md:text-2xl font-semibold tracking-tight bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
                               {step.title}

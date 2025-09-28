@@ -11,19 +11,25 @@ export function SharedHeader() {
   const isHomePage = pathname === "/"
 
   return (
-    <header className="glass-nav sticky top-0 z-50">
-      <div className="container mx-auto lg:px-24 px-4 py-6">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 cursor-pointer group">
-            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
-              <Building2 className="h-7 w-7 text-primary-foreground" />
+    <header className="glass-nav sticky top-0 z-50 overflow-x-hidden">
+      <div className="container mx-auto lg:px-12 xl:px-24 px-4 py-4 sm:py-6 max-w-full">
+        <div className="flex items-center justify-between min-w-0">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 flex-shrink">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
+              <Building2 className="h-5 sm:h-7 w-5 sm:w-7 text-primary-foreground" />
             </div>
-            <span className="text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300">
+            <span className="text-xl sm:text-2xl lg:text-3xl font-light tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300 truncate">
               Property Scout
             </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-12 text-sm uppercase tracking-wider">
+            <Link
+              href="/how-to-work"
+              className={`transition-all duration-500 hover:scale-105 font-medium ${pathname === "/how-to-work" ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
+            >
+              How to Work
+            </Link>
             <Link
               href="/about"
               className={`transition-all duration-500 hover:scale-105 font-medium ${pathname === "/about" ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
@@ -42,26 +48,14 @@ export function SharedHeader() {
             >
               Help
             </Link>
-            <Link
-              href="/privacy"
-              className={`transition-all duration-500 hover:scale-105 font-medium ${pathname === "/privacy" ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
-            >
-              Privacy
-            </Link>
-            <Link
-              href="/terms"
-              className={`transition-all duration-500 hover:scale-105 font-medium ${pathname === "/terms" ? "text-primary" : "text-muted-foreground hover:text-primary"}`}
-            >
-              Terms
-            </Link>
           </nav>
 
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" className="hover:bg-primary/40 hover:text-black text-sm font-medium" asChild>
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            <Button variant="ghost" className="hover:bg-primary/40 hover:text-black text-xs sm:text-sm font-medium px-2 sm:px-4" asChild>
               <Link href="/auth/signin">Sign In</Link>
             </Button>
             <Button
-              className="gradient-primary hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-primary/30 text-sm font-medium px-6"
+              className="gradient-primary hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-primary/30 text-xs sm:text-sm font-medium px-3 sm:px-6"
               asChild
             >
               <Link href="/auth/signup">Get Started</Link>

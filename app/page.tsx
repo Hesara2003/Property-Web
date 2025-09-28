@@ -12,21 +12,21 @@ import { StatsEngagementSection } from "@/components/stats-engagement-section"
 export default function LandingPage() {
   return (
   <GSAPScrollProvider>
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen bg-background overflow-x-hidden">
       {/* Hero Section (Fixed Parallax Background) */}
       <section className="py-12 lg:py-40 relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-hidden">
           {/* Fixed background image using CSS parallax (background-attachment: fixed on desktop) */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-[url('https://safdie-staging.imgix.net/0aa3f522-14a8-448f-b5e8-d7b02c7e62fe/Altair_HeroMedia000.jpg?q=50&w=1600&fit=crop&max_h=900')] bg-cover bg-center md:bg-fixed scale-105"
+            className="absolute inset-0 bg-[url('https://safdie-staging.imgix.net/0aa3f522-14a8-448f-b5e8-d7b02c7e62fe/Altair_HeroMedia000.jpg?q=50&w=1600&fit=crop&max_h=900')] bg-cover bg-center md:bg-fixed"
           />
           {/* Soft overlay gradient (static to reduce motion for accessibility) */}
           <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/50 to-black/60" />
           {/* Accent glow layer (kept subtle & static) */}
-          <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[110%] h-[110%] bg-gradient-radial from-blue-500/20 via-transparent to-transparent blur-3xl opacity-70 pointer-events-none" />
+          <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-full max-w-full h-full bg-gradient-radial from-blue-500/20 via-transparent to-transparent blur-3xl opacity-70 pointer-events-none" />
         </div>
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 max-w-full">
           <div className="text-center space-y-12 max-w-6xl mx-auto">
             <div className="space-y-8 animate-fade-in-up">
               <Badge
@@ -72,18 +72,18 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Locations Gallery */}
-      <section className="py-28 relative overflow-hidden" data-gsap="fade-up" data-gsap-delay="0.1">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/10 rounded-full blur-3xl" />
+      <section className="py-16 sm:py-28 relative overflow-hidden" data-gsap="fade-up" data-gsap-delay="0.1">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-24 -right-24 w-48 sm:w-96 h-48 sm:h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/10 rounded-full blur-3xl" />
         </div>
-        <div className="container mx-auto px-4 lg:px-24">
+        <div className="container mx-auto px-4 lg:px-12 xl:px-24 max-w-full">
           <div className="flex flex-col lg:flex-row lg:items-center gap-16">
             <div className="flex-1 space-y-8">
               <Badge variant="secondary" className="px-4 py-1 text-xs tracking-wider">Featured Locations</Badge>
-              <h2 className="text-4xl md:text-5xl font-light tracking-tight leading-tight text-balance">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight leading-tight text-balance max-w-full">
                 Explore Sri Lanka's <span className="bg-gradient-to-r from-blue-600 to-violet-500 bg-clip-text text-transparent">Prime Property</span> Destinations
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-xl">
                 From luxury urban residences in Colombo to heritage charm in Galle and cool hillside retreats in Kandy – discover curated investment and lifestyle opportunities across the island.
               </p>
               <div className="grid grid-cols-2 gap-4 max-w-md">
@@ -145,8 +145,8 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="py-12 gradient-hero relative overflow-hidden" data-gsap="fade-in" data-gsap-delay="0.1">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="container mx-auto px-6 text-center relative">
+        <div className="absolute inset-0 bg-black/20 overflow-hidden"></div>
+        <div className="container mx-auto px-4 sm:px-6 text-center relative max-w-full">
           <div className="max-w-4xl mx-auto space-y-10 animate-fade-in-up">
             <h2 className="text-hero font-light tracking-tight text-balance text-primary-foreground">
               Begin Your Property Journey Today
